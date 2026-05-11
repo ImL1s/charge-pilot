@@ -17,6 +17,7 @@ android {
 
 dependencies {
     implementation(project(":feature:advanced:api"))
+    implementation(project(":core:control"))
     "fullImplementation"(project(":core:control-shizuku"))
     "fullImplementation"(project(":core:control-root"))
 }

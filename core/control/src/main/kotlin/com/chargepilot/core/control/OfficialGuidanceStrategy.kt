@@ -1,5 +1,6 @@
 package com.chargepilot.core.control
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import com.chargepilot.core.model.CapabilityDescriptor
@@ -39,7 +40,15 @@ class OfficialGuidanceStrategy @Inject constructor(
         val spec = descriptor.officialIntent
             ?: return ControlResult.Failed(FailureReason.UNSUPPORTED_DEVICE)
         val intent = Intent(spec.action).apply {
-            spec.component?.let { setPackage(it) }
+            spec.categories.forEach(::addCategory)
+            spec.component?.let { component ->
+                val explicitComponent = ComponentName.unflattenFromString(component)
+                if (explicitComponent != null) {
+                    setComponent(explicitComponent)
+                } else {
+                    setPackage(component)
+                }
+            }
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         // Pre-flight: refuse rather than silently fall back to the wrong screen. If the

@@ -10,9 +10,8 @@ import javax.inject.Singleton
  * Default [PreconditionChecker]: evaluates each precondition against the device's current
  * runtime by asking [BatteryProvider] and [ForegroundDetector] in turn.
  *
- * Both of those providers are stubs in the current scaffold (they always report
- * "unmet"). That is intentional: the checker is honest about ignorance — preconditions it
- * cannot evaluate are reported as unmet, never silently treated as met.
+ * The checker stays conservative: preconditions that cannot be evaluated from the
+ * current device state are reported as unmet, never silently treated as met.
  */
 @Singleton
 class DefaultPreconditionChecker @Inject constructor(
@@ -30,9 +29,6 @@ class DefaultPreconditionChecker @Inject constructor(
             val level = battery.batteryLevelPercent() ?: return false
             level > precondition.percent
         }
-        is Precondition.GameInForeground -> {
-            val pkg = foreground.currentForegroundPackage() ?: return false
-            precondition.knownGames?.contains(pkg) ?: true
-        }
+        is Precondition.GameInForeground -> foreground.isGameInForeground(precondition.knownGames)
     }
 }

@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":feature:disclosure:api"))
     implementation(project(":core:capability"))
     implementation(project(":core:control"))
+    implementation(project(":core:datastore"))
     implementation(project(":core:device"))
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.truth)

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detected_device">偵測到的裝置</string>
+    <string name="rom_unknown">ROM 未知</string>
+    <string name="rom_android_format">%1$s · Android %2$s（API %3$d）</string>
+    <string name="codename_format">代號：%1$s</string>
+
+    <string name="fallback_path_format">備用路徑：%1$s</string>
+    <string name="fallback_notes">備用說明</string>
+    <string name="setup_app_control_shizuku">設定 App 內控制（Shizuku）</string>
+    <string name="setup_shizuku_fallback">設定 Shizuku 備用路徑</string>
+    <string name="open_fallback_path">開啟備用路徑</string>
+
+    <string name="state_ready_to_check">App 控制：可檢查</string>
+    <string name="state_off">App 控制：關閉</string>
+    <string name="state_on_checking">旁路設定已開啟，正在檢查即時條件…</string>
+    <string name="state_waiting_format">旁路設定已開啟，正在等待%1$s。</string>
+    <string name="state_active">旁路充電目前已生效。</string>
+    <string name="live_requirements">即時條件</string>
+    <string name="condition_tip">提示：Samsung 在更換線材後可能會短暫重新協商。如果 USB PD/PPS 一直等待中，請重新插拔線材或檢查 Samsung 電池設定中的超快速充電。</string>
+
+    <string name="condition_ready">就緒</string>
+    <string name="condition_waiting">等待中</string>
+    <string name="condition_required">需要</string>
+    <string name="condition_checking">檢查中</string>
+
+    <string name="precondition_pd_charger">偵測到 USB PD/PPS 快充器</string>
+    <string name="precondition_battery_above_format">電量高於 %1$d%%</string>
+    <string name="precondition_game_foreground">支援的遊戲在前景</string>
+    <string name="summary_live_requirements">即時條件</string>
+    <string name="summary_pd_charger">USB PD/PPS 快充器</string>
+    <string name="summary_battery_above_format">電量高於 %1$d%%</string>
+    <string name="summary_game_foreground">支援的遊戲在前景</string>
+    <string name="summary_two_format">%1$s與%2$s</string>
+    <string name="summary_many_format">%1$s，以及%2$s</string>
+
+    <string name="cap_pause_pd">遊戲時暫停 USB PD 充電</string>
+    <string name="cap_bypass">旁路充電</string>
+    <string name="cap_charge_separation">充電分離</string>
+    <string name="cap_battery_limit_80" formatted="false">80% 電池上限</string>
+    <string name="cap_adaptive_charging">自動調整充電</string>
+    <string name="cap_smart_charging">智慧充電</string>
+    <string name="cap_custom_charge_limit">自訂充電上限</string>
+
+    <string name="method_official">官方／手動指南</string>
+    <string name="method_write_settings">App 內設定寫入</string>
+    <string name="method_shizuku">Shizuku 一鍵控制</string>
+    <string name="method_root">Root shell</string>
+
+    <string name="setup_title_install_shizuku">第 1 步，共 3 步：安裝 Shizuku</string>
+    <string name="setup_title_start_shizuku">第 2 步，共 3 步：啟動 Shizuku</string>
+    <string name="setup_title_grant_charge_pilot">第 3 步，共 3 步：授權 Charge Pilot</string>
+    <string name="setup_title_unavailable">Shizuku App 控制目前不可用</string>
+    <string name="setup_title_unsupported">此功能不支援 Shizuku App 控制</string>
+    <string name="setup_title_ready">Shizuku App 控制已就緒</string>
+    <string name="setup_detail_install_shizuku">從官方頁面安裝 Shizuku，然後回到 Charge Pilot。Charge Pilot 會接續下一步。</string>
+    <string name="setup_detail_start_shizuku">開啟 Shizuku，使用無線偵錯啟動，然後回到 Charge Pilot。不需要 root。</string>
+    <string name="setup_detail_grant_charge_pilot">在這裡要求 Shizuku 權限，核准提示後，Charge Pilot 就能控制旁路充電。</string>
+    <string name="setup_detail_unavailable">此版本看得到 Shizuku 路徑，但裝置尚未準備好 App 控制。</string>
+    <string name="setup_detail_unsupported">此能力不允許 Shizuku 控制。</string>
+    <string name="setup_detail_ready">在 Charge Pilot 使用開啟／關閉旁路充電按鈕。</string>
+    <string name="setup_button_install_shizuku">安裝 Shizuku</string>
+    <string name="setup_button_open_shizuku">開啟 Shizuku</string>
+    <string name="setup_button_grant_shizuku">授予 Shizuku 權限</string>
+    <string name="setup_button_open_shizuku_setup">開啟 Shizuku 設定</string>
+    <string name="setup_button_set_up_app_control">設定 App 控制</string>
+    <string name="setup_button_ready">App 控制已就緒</string>
+
+    <string name="action_turn_off_bypass">關閉旁路充電</string>
+    <string name="action_turn_on_bypass">開啟旁路充電</string>
+    <string name="action_turn_off">關閉</string>
+    <string name="action_turn_on">開啟</string>
+
+
+    <string name="evidence_official_doc">官方文件</string>
+    <string name="evidence_official_community">官方社群</string>
+    <string name="evidence_community_tested">社群實測</string>
+    <string name="evidence_project_verified">專案已驗證</string>
+    <string name="evidence_unverified">未驗證</string>
+
+    <string name="evidence_prefix">證據：%1$s</string>
+    <string name="evidence_verified_format">%1$s · 已驗證 %2$s</string>
+    <string name="route_app_control_format">App 控制路徑：%1$s</string>
+    <string name="route_needs_setup_format">App 控制需要設定：%1$s</string>
+    <string name="route_exists_inactive">此能力有 App 控制路徑，但目前版本尚未啟用。</string>
+    <string name="route_manual_available">目前沒有啟用 App 控制後端；可使用手動備用路徑。</string>
+    <string name="route_none_registered">此能力尚未登錄支援的控制路徑。</string>
+</resources>

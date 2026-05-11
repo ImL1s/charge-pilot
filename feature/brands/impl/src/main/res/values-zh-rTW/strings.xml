@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brands_loading_title">正在載入品牌矩陣…</string>
+    <string name="brands_loading_body">正在讀取內建能力登錄檔。</string>
+    <string name="brands_error_title">品牌矩陣不可用</string>
+    <string name="brands_ready_title">品牌支援矩陣</string>
+    <string name="brands_ready_body">這些項目是此版本內建的精確規則。首頁會使用偵測到的手機；此分頁可用來比較各品牌的手動與直接控制支援。</string>
+    <string name="brands_route_format">路徑：%1$s</string>
+    <string name="brands_manual_path_format">手動路徑：%1$s</string>
+    <string name="brands_models_format">型號：%1$s</string>
+    <string name="brands_min_rom_format">最低 ROM：%1$s %2$s</string>
+    <string name="brands_all_supported_format">所有支援的 %1$s 型號</string>
+    <string name="brands_recorded_unsupported">記錄為不支援</string>
+    <string name="brands_verified_format">%1$s · 已驗證 %2$s</string>
+    <string name="brands_source_recorded_format">%1$s · 已記錄來源</string>
+
+    <string name="brands_cap_pause_pd">遊戲時暫停 USB PD 充電</string>
+    <string name="brands_cap_bypass">旁路充電</string>
+    <string name="brands_cap_charge_separation">充電分離</string>
+    <string name="brands_cap_battery_limit_80" formatted="false">80% 電池上限</string>
+    <string name="brands_cap_adaptive_charging">自動調整充電</string>
+    <string name="brands_cap_smart_charging">智慧充電</string>
+    <string name="brands_cap_custom_charge_limit">自訂充電上限</string>
+    <string name="brands_method_official">官方／手動指南</string>
+    <string name="brands_method_write_settings">Android 設定寫入</string>
+    <string name="brands_method_shizuku">Shizuku 一鍵控制</string>
+    <string name="brands_method_root">Root shell</string>
+    <string name="brands_evidence_official_doc">官方文件</string>
+    <string name="brands_evidence_official_community">官方社群</string>
+    <string name="brands_evidence_community_tested">社群實測</string>
+    <string name="brands_evidence_project_verified">專案已驗證</string>
+    <string name="brands_evidence_unverified">未驗證</string>
+</resources>

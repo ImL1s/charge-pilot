@@ -11,4 +11,7 @@ dependencies {
     api(project(":core:model"))
     implementation(project(":core:common"))
     implementation(libs.coroutines.core)
+
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.truth)
 }

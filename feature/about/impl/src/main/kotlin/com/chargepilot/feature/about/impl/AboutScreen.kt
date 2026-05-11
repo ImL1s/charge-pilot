@@ -1,20 +1,57 @@
 package com.chargepilot.feature.about.impl
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.chargepilot.core.ui.InfoCard
+import com.chargepilot.core.ui.StepList
 
 @Composable
 fun AboutScreen() {
-    Column(modifier = Modifier.padding(24.dp)) {
-        Text(text = "Charge Pilot", style = MaterialTheme.typography.headlineSmall)
-        Text(
-            text = "Cross-brand charging-capability detector. Open source, AGPL-3.0. No telemetry. All changes reversible.",
-            style = MaterialTheme.typography.bodyMedium,
-        )
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            InfoCard(
+                title = stringResource(R.string.about_title_app),
+                body = stringResource(R.string.about_body_app),
+            )
+        }
+        item {
+            InfoCard(
+                title = stringResource(R.string.about_title_privacy),
+                body = stringResource(R.string.about_body_privacy),
+            ) {
+                StepList(
+                    steps = listOf(
+                        stringResource(R.string.about_step_manual_first),
+                        stringResource(R.string.about_step_app_control_condition),
+                        stringResource(R.string.about_step_reversible),
+                    ),
+                )
+            }
+        }
+        item {
+            InfoCard(
+                title = stringResource(R.string.about_title_build_boundaries),
+                body = stringResource(R.string.about_body_build_boundaries),
+            )
+        }
+        item {
+            InfoCard(
+                title = stringResource(R.string.about_title_license),
+                body = stringResource(R.string.about_body_license),
+            )
+        }
     }
 }

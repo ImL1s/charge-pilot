@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.chargepilot.app.R
 import com.chargepilot.feature.about.api.AboutRoute
 import com.chargepilot.feature.about.api.aboutRoute
 import com.chargepilot.feature.about.impl.AboutScreen
@@ -43,13 +45,13 @@ private sealed class TopLevelDestination(
     val route: Any,
     val routeClass: KClass<*>,
     val icon: ImageVector,
-    val label: String,
+    val labelRes: Int,
 ) {
-    data object Home : TopLevelDestination(HomeRoute, HomeRoute::class, Icons.Outlined.Home, "Home")
-    data object Brands : TopLevelDestination(BrandsRoute, BrandsRoute::class, Icons.Outlined.Star, "Brands")
-    data object History : TopLevelDestination(HistoryRoute, HistoryRoute::class, Icons.Outlined.History, "History")
-    data object Advanced : TopLevelDestination(AdvancedRoute, AdvancedRoute::class, Icons.Outlined.Tune, "Advanced")
-    data object About : TopLevelDestination(AboutRoute, AboutRoute::class, Icons.Outlined.Info, "About")
+    data object Home : TopLevelDestination(HomeRoute, HomeRoute::class, Icons.Outlined.Home, R.string.nav_home)
+    data object Brands : TopLevelDestination(BrandsRoute, BrandsRoute::class, Icons.Outlined.Star, R.string.nav_brands)
+    data object History : TopLevelDestination(HistoryRoute, HistoryRoute::class, Icons.Outlined.History, R.string.nav_history)
+    data object Advanced : TopLevelDestination(AdvancedRoute, AdvancedRoute::class, Icons.Outlined.Tune, R.string.nav_advanced)
+    data object About : TopLevelDestination(AboutRoute, AboutRoute::class, Icons.Outlined.Info, R.string.nav_about)
 }
 
 private val topLevelDestinations: List<TopLevelDestination> = listOf(
@@ -70,6 +72,7 @@ fun ChargePilotNavHost() {
         bottomBar = {
             NavigationBar {
                 topLevelDestinations.forEach { destination ->
+                    val destinationLabel = stringResource(destination.labelRes)
                     val selected = currentDestination?.hierarchy()
                         ?.any { it.hasRoute(destination.routeClass) } == true
                     NavigationBarItem(
@@ -83,8 +86,8 @@ fun ChargePilotNavHost() {
                                 restoreState = true
                             }
                         },
-                        icon = { Icon(destination.icon, contentDescription = destination.label) },
-                        label = { Text(destination.label) },
+                        icon = { Icon(destination.icon, contentDescription = destinationLabel) },
+                        label = { Text(destinationLabel) },
                     )
                 }
             }

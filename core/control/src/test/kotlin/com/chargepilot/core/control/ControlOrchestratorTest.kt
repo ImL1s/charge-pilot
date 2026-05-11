@@ -100,4 +100,15 @@ class ControlOrchestratorTest {
         assertThat(orchestrator.availableMethods())
             .containsExactly(ControlMethod.OFFICIAL_GUIDANCE)
     }
+
+    @Test
+    fun `strategyFor returns registered strategy without availability fallback`() {
+        val strategy = fakeStrategy(ControlMethod.WRITE_SETTINGS_KEY, available = false)
+        val orchestrator = ControlOrchestrator(
+            mapOf(ControlMethod.WRITE_SETTINGS_KEY to strategy)
+        )
+
+        assertThat(orchestrator.strategyFor(ControlMethod.WRITE_SETTINGS_KEY)).isSameInstanceAs(strategy)
+        assertThat(orchestrator.strategyFor(ControlMethod.SHIZUKU_RPC)).isNull()
+    }
 }

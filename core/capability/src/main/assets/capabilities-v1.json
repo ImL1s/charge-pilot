@@ -7,26 +7,51 @@
       "matchers": {
         "manufacturer": "SAMSUNG",
         "modelRegex": "SM-S(91|92|93|94)[0-9].*",
-        "minRomVersion": { "flavor": "ONE_UI", "version": "6.0" }
+        "minRomVersion": {
+          "flavor": "ONE_UI",
+          "version": "6.0"
+        }
       },
       "capabilities": [
         {
           "id": "samsung-galaxy-s2x-pause-pd::PAUSE_PD_DURING_GAMING",
           "type": "PAUSE_PD_DURING_GAMING",
-          "availableMethods": ["OFFICIAL_GUIDANCE", "WRITE_SETTINGS_KEY"],
-          "settingsKey": { "namespace": "system", "key": "pass_through", "type": "int" },
+          "availableMethods": [
+            "SHIZUKU_RPC",
+            "OFFICIAL_GUIDANCE"
+          ],
+          "settingsKey": {
+            "namespace": "system",
+            "key": "pass_through",
+            "type": "int"
+          },
           "officialIntent": {
-            "action": "android.settings.SETTINGS",
-            "fallbackPath": "Game Booster -> Pause USB PD charging when gaming"
+            "action": "android.intent.action.MAIN",
+            "component": "com.samsung.android.game.gamehome/.app.MainActivity",
+            "fallbackPath": "Gaming Hub home -> More -> Game Booster settings -> Pause USB PD charging when gaming"
           },
           "preconditions": [
-            { "type": "PdChargerPresent" },
-            { "type": "BatteryLevelAbove", "percent": 20 },
-            { "type": "GameInForeground" }
+            {
+              "type": "PdChargerPresent"
+            },
+            {
+              "type": "BatteryLevelAbove",
+              "percent": 20
+            },
+            {
+              "type": "GameInForeground"
+            }
           ],
           "evidence": "PROJECT_VERIFIED",
-          "sourceUrl": "https://www.samsung.com/levant/support/mobile-devices/whats-the-pause-charging-via-pd-feature/",
-          "verifiedDate": "2026-04-12"
+          "sourceUrl": "https://www.samsung.com/uk/support/mobile-devices/what-is-the-pause-usb-power-delivery-feature/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Primary app-control path: install/open Shizuku, start it with Wireless debugging, grant Charge Pilot once, then tap Turn on bypass charging in Charge Pilot.",
+            "Normal Android Modify system settings access was tested on S24 Ultra and did not write the Samsung pass_through key.",
+            "For a normal app, do not only add a Gaming Hub shortcut. Install Samsung Game Plugins plus the Game Booster+ module, then use Game Booster+ -> Game category settings to classify the target app as Game.",
+            "Verified caveat: the tested SM-S9280 Taiwan One UI 8 build opens Game Booster+ but returns 'Unable to run: GOS Lite', so normal-app classification is blocked on that firmware.",
+            "Manual fallback: open Gaming Hub -> More -> Game Booster settings -> Pause USB PD charging when gaming."
+          ]
         }
       ]
     },
@@ -35,41 +60,89 @@
       "matchers": {
         "manufacturer": "SAMSUNG",
         "modelRegex": "SM-F(7|9)[0-9]{2}.*",
-        "minRomVersion": { "flavor": "ONE_UI", "version": "6.0" }
+        "minRomVersion": {
+          "flavor": "ONE_UI",
+          "version": "6.0"
+        }
       },
       "capabilities": [
         {
           "id": "samsung-galaxy-zfold-zflip::PAUSE_PD_DURING_GAMING",
           "type": "PAUSE_PD_DURING_GAMING",
-          "availableMethods": ["OFFICIAL_GUIDANCE"],
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
           "officialIntent": {
-            "action": "android.settings.SETTINGS",
-            "fallbackPath": "Game Booster -> Pause USB PD charging when gaming"
+            "action": "android.intent.action.MAIN",
+            "component": "com.samsung.android.game.gamehome/.app.MainActivity",
+            "fallbackPath": "Gaming Hub home -> More -> Game Booster settings -> Pause USB PD charging when gaming"
           },
+          "preconditions": [
+            {
+              "type": "PdChargerPresent"
+            },
+            {
+              "type": "BatteryLevelAbove",
+              "percent": 20
+            },
+            {
+              "type": "GameInForeground"
+            }
+          ],
           "evidence": "OFFICIAL_DOC",
-          "sourceUrl": "https://www.samsung.com/"
+          "sourceUrl": "https://www.samsung.com/uk/support/mobile-devices/what-is-the-pause-usb-power-delivery-feature/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Samsung blocks direct third-party launch of the hidden Game Booster settings activity on this S24 Ultra.",
+            "Tap Open official path to open Gaming Hub, then open More and Game Booster settings.",
+            "For a normal app, install Samsung Game Plugins plus the Game Booster+ module, then use Game Booster+ -> Game category settings to classify the target app as Game before launching it.",
+            "If Game Plugins or Game Booster+ shows 'Unable to run: GOS Lite', this firmware cannot use Game Booster+ classification; use a real game session or the Shizuku pass_through control path where available.",
+            "Enable Pause USB PD charging when gaming, connect a USB PD/PPS charger, keep battery above 20%, and launch a game."
+          ]
         }
       ]
     },
     {
       "id": "google-pixel-battery",
-      "matchers": { "manufacturer": "GOOGLE" },
+      "matchers": {
+        "manufacturer": "GOOGLE"
+      },
       "capabilities": [
         {
           "id": "google-pixel-battery::BATTERY_LIMIT_80",
           "type": "BATTERY_LIMIT_80",
-          "availableMethods": ["OFFICIAL_GUIDANCE"],
-          "officialIntent": { "action": "android.settings.BATTERY_SAVER_SETTINGS" },
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.BATTERY_SAVER_SETTINGS",
+            "fallbackPath": "Settings -> Battery -> Battery health -> Charging optimization -> Limit to 80%"
+          },
           "evidence": "OFFICIAL_DOC",
-          "sourceUrl": "https://support.google.com/pixelphone/answer/15581643"
+          "sourceUrl": "https://support.google.com/pixelphone/answer/6090612?hl=en",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Android Battery settings.",
+            "Open Battery health / Charging optimization and choose Limit to 80%."
+          ]
         },
         {
           "id": "google-pixel-battery::ADAPTIVE_CHARGING",
           "type": "ADAPTIVE_CHARGING",
-          "availableMethods": ["OFFICIAL_GUIDANCE"],
-          "officialIntent": { "action": "android.settings.BATTERY_SAVER_SETTINGS" },
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.BATTERY_SAVER_SETTINGS",
+            "fallbackPath": "Settings -> Battery -> Battery health -> Charging optimization -> Adaptive Charging"
+          },
           "evidence": "OFFICIAL_DOC",
-          "sourceUrl": "https://support.google.com/pixelphone/answer/9241779"
+          "sourceUrl": "https://support.google.com/pixelphone/answer/6090612?hl=en",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Android Battery settings.",
+            "Open Battery health / Charging optimization and enable Adaptive Charging."
+          ]
         }
       ]
     },
@@ -77,36 +150,144 @@
       "id": "oneplus-bypass-charging",
       "matchers": {
         "manufacturer": "ONEPLUS",
-        "modelRegex": "(CPH|PJZ).*"
+        "modelRegex": "(CPH26|CPH27|PJZ).*",
+        "minRomVersion": {
+          "flavor": "OXYGEN_OS",
+          "version": "16.0"
+        }
       },
       "capabilities": [
         {
           "id": "oneplus-bypass-charging::BYPASS_CHARGING",
           "type": "BYPASS_CHARGING",
-          "availableMethods": ["OFFICIAL_GUIDANCE", "SHIZUKU_RPC"],
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
           "officialIntent": {
             "action": "android.settings.SETTINGS",
-            "fallbackPath": "Battery -> Bypass Charging"
+            "fallbackPath": "Settings -> Battery / high-load use -> Bypass charging (OxygenOS 16 supported models)"
           },
-          "evidence": "OFFICIAL_DOC",
-          "sourceUrl": "https://www.oneplus.com/"
+          "evidence": "OFFICIAL_COMMUNITY",
+          "sourceUrl": "https://community.oneplus.com/thread/2039598900649656328",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Search Battery or high-load use settings for Bypass charging on supported OxygenOS 16 models."
+          ]
         }
       ]
     },
     {
-      "id": "honor-charge-separation",
-      "matchers": { "manufacturer": "HONOR" },
+      "id": "honor-smart-charging",
+      "matchers": {
+        "manufacturer": "HONOR"
+      },
       "capabilities": [
         {
-          "id": "honor-charge-separation::CHARGE_SEPARATION",
-          "type": "CHARGE_SEPARATION",
-          "availableMethods": ["OFFICIAL_GUIDANCE"],
+          "id": "honor-smart-charging::SMART_CHARGING",
+          "type": "SMART_CHARGING",
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
           "officialIntent": {
             "action": "android.settings.SETTINGS",
-            "fallbackPath": "Game Manager -> Tools -> Charge Separation"
+            "fallbackPath": "Settings -> Battery -> More battery settings -> Smart Charge / Smart Battery Capacity"
           },
-          "evidence": "OFFICIAL_COMMUNITY",
-          "sourceUrl": "https://www.honor.com/"
+          "evidence": "OFFICIAL_DOC",
+          "sourceUrl": "https://www.honor.com/uk/support/content/en-us15840738/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Open Battery, then More battery settings, and enable Smart Charge or Smart Battery Capacity."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "huawei-smart-charge",
+      "matchers": {
+        "manufacturer": "HUAWEI"
+      },
+      "capabilities": [
+        {
+          "id": "huawei-smart-charge::SMART_CHARGING",
+          "type": "SMART_CHARGING",
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.SETTINGS",
+            "fallbackPath": "Settings -> Battery -> More battery settings -> Smart Charge"
+          },
+          "evidence": "OFFICIAL_DOC",
+          "sourceUrl": "https://consumer.huawei.com/en/support/content/en-us15871210/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Open Battery, then More battery settings, and enable Smart Charge."
+          ]
+        },
+        {
+          "id": "huawei-smart-charge::CUSTOM_CHARGE_LIMIT",
+          "type": "CUSTOM_CHARGE_LIMIT",
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.SETTINGS",
+            "fallbackPath": "Settings -> Battery -> More battery settings -> Custom limit"
+          },
+          "evidence": "OFFICIAL_DOC",
+          "sourceUrl": "https://consumer.huawei.com/en/support/content/en-us15871210/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Open Battery, then More battery settings, and configure Custom limit."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xiaomi-battery-protection",
+      "matchers": {
+        "manufacturer": "XIAOMI"
+      },
+      "capabilities": [
+        {
+          "id": "xiaomi-battery-protection::BATTERY_LIMIT_80",
+          "type": "BATTERY_LIMIT_80",
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.SETTINGS",
+            "fallbackPath": "Settings -> Battery -> Battery protection / Charging modes -> 80% limit (supported models)"
+          },
+          "evidence": "OFFICIAL_DOC",
+          "sourceUrl": "https://www.mi.com/ph/support/faq/details/KA-491339/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Open Battery protection or Charging modes and choose the 80% limit when the model supports it."
+          ]
+        },
+        {
+          "id": "xiaomi-battery-protection::SMART_CHARGING",
+          "type": "SMART_CHARGING",
+          "availableMethods": [
+            "OFFICIAL_GUIDANCE"
+          ],
+          "officialIntent": {
+            "action": "android.settings.SETTINGS",
+            "fallbackPath": "Settings -> Battery -> Battery protection / Optimized charging / Nighttime charging protection"
+          },
+          "evidence": "OFFICIAL_DOC",
+          "sourceUrl": "https://www.mi.com/ph/support/faq/details/KA-491339/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "Tap Open official path to open Settings.",
+            "Open Battery protection and enable Optimized charging or Nighttime charging protection."
+          ]
         }
       ]
     },
@@ -122,8 +303,11 @@
           "type": "BYPASS_CHARGING",
           "availableMethods": [],
           "evidence": "OFFICIAL_DOC",
-          "sourceUrl": "https://www.mi.com/global/poco-f7-faq",
-          "verifiedDate": "2026-04-01"
+          "sourceUrl": "https://www.mi.com/my/support/faq/details/KA-618354/",
+          "verifiedDate": "2026-05-11",
+          "guidanceSteps": [
+            "This model is recorded as unsupported for bypass charging in the bundled registry."
+          ]
         }
       ]
     }

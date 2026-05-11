@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="advanced_full_title">進階 Full 版本</string>
+    <string name="advanced_full_body">Full 版本在使用者授權一次 Shizuku 後，可控制 Samsung 旁路充電。不需要 root。S24 Ultra 實測一般 Android「修改系統設定」權限無法寫入 Samsung pass_through。</string>
+    <string name="advanced_shizuku_title">Shizuku App 內控制</string>
+    <string name="advanced_shizuku_body">Shizuku 是 Samsung S24 Ultra 的 App 控制後端。Charge Pilot 不能內建、靜默安裝或靜默啟動 Shizuku；但完成設定後，首頁可在 Charge Pilot 內控制此設定。</string>
+    <string name="advanced_shizuku_step_install">從官方來源安裝／開啟 Shizuku。</string>
+    <string name="advanced_shizuku_step_wireless_debugging">啟用開發人員選項與無線偵錯。</string>
+    <string name="advanced_shizuku_step_pair_start">在 Shizuku App 中配對並啟動 Shizuku。</string>
+    <string name="advanced_shizuku_step_grant">回到 Charge Pilot，看到提示時授權。</string>
+    <string name="advanced_shizuku_step_use_home">使用首頁 -> 開啟旁路充電。重新開機後通常需要重新開啟 Shizuku，因為服務多半會停止。</string>
+    <string name="advanced_samsung_limit_title">Samsung 備用路徑限制</string>
+    <string name="advanced_samsung_limit_body">Samsung 會限制第三方 App 直接開啟隱藏的 Game Booster 設定頁。Charge Pilot 會在可行時直接控制設定鍵，Gaming Hub 只保留為備用路徑。</string>
+    <string name="advanced_install_open_shizuku">安裝／開啟 Shizuku</string>
+    <string name="advanced_open_developer_options">開啟開發人員選項</string>
+    <string name="advanced_official_shizuku_guide">官方 Shizuku 指南</string>
+    <string name="advanced_play_title">Play 版本的進階功能</string>
+    <string name="advanced_play_body">Play 版本不包含 Shizuku 或 root 模組。Samsung S24 Ultra App 內控制需要 Full 版本，因為實測一般 Android「修改系統設定」無法寫入 Samsung pass_through。</string>
+    <string name="advanced_play_samsung_fallback_title">Samsung 備用路徑</string>
+    <string name="advanced_play_samsung_fallback_body">在首頁使用「開啟備用路徑」，接著到 Gaming Hub 開啟 More -> Game Booster settings -> Pause USB PD charging when gaming。</string>
+    <string name="advanced_play_step_pd">使用 USB PD/PPS 充電器。</string>
+    <string name="advanced_play_step_battery" formatted="false">讓電量高於 Samsung 門檻，通常是 20%。</string>
+    <string name="advanced_play_step_game">啟動遊戲，讓 Game Booster 套用設定。</string>
+    <string name="advanced_play_need_control_title">需要 App 內控制？</string>
+    <string name="advanced_play_need_control_body">從可信任的非 Play 發布管道安裝 Full 版本，並用無線偵錯設定 Shizuku。Root 是可選的。</string>
+</resources>

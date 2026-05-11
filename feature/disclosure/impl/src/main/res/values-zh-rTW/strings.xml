@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="disclosure_title">能力揭露</string>
+    <string name="disclosure_body_format">此畫面會先說明能力 %1$s 的本機安全契約，然後 Charge Pilot 才會開啟設定路徑或嘗試由 App 控制寫入。</string>
+    <string name="disclosure_local_title">僅限本機控制</string>
+    <string name="disclosure_local_body">Charge Pilot 只會把嘗試紀錄存在此裝置，不會上傳操作歷史。</string>
+    <string name="disclosure_safety_title">繼續前要確認</string>
+    <string name="disclosure_step_user_initiated">只有在你主動開始設定或切換操作時才繼續。</string>
+    <string name="disclosure_step_preconditions">在首頁確認充電器、電量、前景 App 與品牌專屬前置條件。</string>
+    <string name="disclosure_step_shizuku">Full 版本的 Shizuku 控制需要 Shizuku 已安裝、執行中，且已授權。</string>
+    <string name="disclosure_step_samsung">Samsung Game Booster 旁路仍取決於 Samsung 韌體是否接受 Game Optimizing Service 路徑。</string>
+</resources>

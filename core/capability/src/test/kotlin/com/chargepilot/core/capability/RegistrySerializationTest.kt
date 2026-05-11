@@ -3,8 +3,10 @@ package com.chargepilot.core.capability
 import com.chargepilot.core.model.CapabilityType
 import com.chargepilot.core.model.ControlMethod
 import com.chargepilot.core.model.Evidence
+import com.chargepilot.core.model.Manufacturer
 import com.chargepilot.core.model.Precondition
 import com.google.common.truth.Truth.assertThat
+import java.io.File
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
@@ -33,14 +35,24 @@ class RegistrySerializationTest {
                 {
                   "id": "samsung-galaxy-s2x-pause-pd::PAUSE_PD_DURING_GAMING",
                   "type": "PAUSE_PD_DURING_GAMING",
-                  "availableMethods": ["OFFICIAL_GUIDANCE", "WRITE_SETTINGS_KEY"],
+                  "availableMethods": ["SHIZUKU_RPC", "OFFICIAL_GUIDANCE"],
                   "settingsKey": { "namespace": "system", "key": "pass_through", "type": "int" },
+                  "officialIntent": {
+                    "action": "android.intent.action.MAIN",
+                    "categories": ["android.intent.category.LAUNCHER"],
+                    "component": "com.samsung.android.game.gamehome/.app.MainActivity",
+                    "fallbackPath": "Gaming Hub -> More -> Game Booster -> Pause USB PD charging when gaming"
+                  },
+                  "guidanceSteps": [
+                    "Open Gaming Hub.",
+                    "Open More, then Game Booster settings."
+                  ],
                   "preconditions": [
                     { "type": "PdChargerPresent" },
                     { "type": "BatteryLevelAbove", "percent": 20 },
                     { "type": "GameInForeground" }
                   ],
-                  "evidence": "PROJECT_VERIFIED"
+                  "evidence": "OFFICIAL_DOC"
                 }
               ]
             }
@@ -61,10 +73,21 @@ class RegistrySerializationTest {
         assertThat(descriptor.id).isEqualTo("samsung-galaxy-s2x-pause-pd::PAUSE_PD_DURING_GAMING")
         assertThat(descriptor.type).isEqualTo(CapabilityType.PAUSE_PD_DURING_GAMING)
         assertThat(descriptor.availableMethods)
-            .containsExactly(ControlMethod.OFFICIAL_GUIDANCE, ControlMethod.WRITE_SETTINGS_KEY)
+            .containsExactly(
+                ControlMethod.SHIZUKU_RPC,
+                ControlMethod.OFFICIAL_GUIDANCE,
+            )
             .inOrder()
+        assertThat(descriptor.availableMethods).doesNotContain(ControlMethod.WRITE_SETTINGS_KEY)
+        assertThat(descriptor.settingsKey?.namespace).isEqualTo("system")
         assertThat(descriptor.settingsKey?.key).isEqualTo("pass_through")
-        assertThat(descriptor.evidence).isEqualTo(Evidence.PROJECT_VERIFIED)
+        assertThat(descriptor.officialIntent?.component)
+            .isEqualTo("com.samsung.android.game.gamehome/.app.MainActivity")
+        assertThat(descriptor.officialIntent?.categories)
+            .containsExactly("android.intent.category.LAUNCHER")
+        assertThat(descriptor.guidanceSteps)
+            .containsExactly("Open Gaming Hub.", "Open More, then Game Booster settings.")
+        assertThat(descriptor.evidence).isEqualTo(Evidence.OFFICIAL_DOC)
 
         assertThat(descriptor.preconditions).hasSize(3)
         assertThat(descriptor.preconditions).containsExactly(
@@ -122,4 +145,60 @@ class RegistrySerializationTest {
         val snapshot = json.decodeFromString(CapabilityRegistrySnapshot.serializer(), raw)
         assertThat(snapshot.rules.single().matchers.minRomVersion).isNull()
     }
+
+    @Test
+    fun `bundled registry documents every known manufacturer and gates direct control on a key`() {
+        val raw = registryAsset().readText()
+        val snapshot = json.decodeFromString(CapabilityRegistrySnapshot.serializer(), raw)
+        val manufacturers = snapshot.rules.map { it.matchers.manufacturer }.toSet()
+
+        assertThat(manufacturers).containsAtLeast(
+            Manufacturer.SAMSUNG.name,
+            Manufacturer.GOOGLE.name,
+            Manufacturer.ONEPLUS.name,
+            Manufacturer.XIAOMI.name,
+            Manufacturer.HONOR.name,
+            Manufacturer.HUAWEI.name,
+        )
+
+        val directWithoutKey = snapshot.rules.flatMap { rule ->
+            rule.capabilities.filter { descriptor ->
+                descriptor.availableMethods.any { it.isDirectControl() } &&
+                    descriptor.settingsKey == null
+            }
+        }
+        assertThat(directWithoutKey).isEmpty()
+
+        val samsungS2xPause = snapshot.rules
+            .single { it.id == "samsung-galaxy-s2x-pause-pd" }
+            .capabilities
+            .single { it.type == CapabilityType.PAUSE_PD_DURING_GAMING }
+        assertThat(samsungS2xPause.availableMethods)
+            .containsExactly(
+                ControlMethod.SHIZUKU_RPC,
+                ControlMethod.OFFICIAL_GUIDANCE,
+            )
+            .inOrder()
+        assertThat(samsungS2xPause.availableMethods).doesNotContain(ControlMethod.WRITE_SETTINGS_KEY)
+
+        val samsungPauseGuides = snapshot.rules
+            .filter { it.matchers.manufacturer == Manufacturer.SAMSUNG.name }
+            .flatMap { it.capabilities }
+            .filter { it.type == CapabilityType.PAUSE_PD_DURING_GAMING }
+            .flatMap { it.guidanceSteps }
+        assertThat(samsungPauseGuides).isNotEmpty()
+        assertThat(samsungPauseGuides.joinToString(separator = "\n"))
+            .contains("Game Booster settings")
+    }
+
+    private fun registryAsset(): File {
+        val modulePath = File("src/main/assets/capabilities-v1.json")
+        if (modulePath.exists()) return modulePath
+        return File("core/capability/src/main/assets/capabilities-v1.json")
+    }
+
+    private fun ControlMethod.isDirectControl(): Boolean =
+        this == ControlMethod.WRITE_SETTINGS_KEY ||
+            this == ControlMethod.SHIZUKU_RPC ||
+            this == ControlMethod.ROOT_SHELL
 }

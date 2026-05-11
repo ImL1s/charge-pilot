@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.chargepilot.core.model.DeviceProfile
 
@@ -24,6 +25,12 @@ fun DeviceProfileCard(profile: DeviceProfile, modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
+                text = stringResource(R.string.detected_device),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
                 text = "${profile.manufacturer.name} · ${profile.model}",
                 style = MaterialTheme.typography.titleLarge,
             )
@@ -31,10 +38,16 @@ fun DeviceProfileCard(profile: DeviceProfile, modifier: Modifier = Modifier) {
             val rom = profile.romVersion?.let { romVersion ->
                 romVersion.displayLabel
                     ?: "${romVersion.flavor.name.replace('_', ' ')} ${romVersion.version}"
-            } ?: "ROM unknown"
+            } ?: stringResource(R.string.rom_unknown)
             Text(
-                text = "$rom · Android ${profile.androidVersion} (API ${profile.androidApi})",
+                text = stringResource(R.string.rom_android_format, rom, profile.androidVersion, profile.androidApi),
                 style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.codename_format, profile.codename),
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

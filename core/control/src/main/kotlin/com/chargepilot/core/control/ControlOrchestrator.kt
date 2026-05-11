@@ -8,9 +8,8 @@ import javax.inject.Singleton
 
 /**
  * Picks the highest-preference [ControlStrategy] that is currently available for a given
- * capability. Order: explicit user preference -> the descriptor's `availableMethods` list
- * (which is itself ordered by preference: OFFICIAL_GUIDANCE -> WRITE_SETTINGS_KEY ->
- * SHIZUKU_RPC -> ROOT_SHELL).
+ * capability. Order: explicit user preference -> the descriptor's `availableMethods` list.
+ * Descriptors should put app-internal control methods before manual/official fallback routes.
  */
 @Singleton
 class ControlOrchestrator @Inject constructor(
@@ -32,4 +31,6 @@ class ControlOrchestrator @Inject constructor(
     }
 
     fun availableMethods(): Set<ControlMethod> = strategies.keys
+
+    fun strategyFor(method: ControlMethod): ControlStrategy? = strategies[method]
 }

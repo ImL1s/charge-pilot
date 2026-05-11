@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Charge Pilot</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_brands">Brands</string>
+    <string name="nav_history">History</string>
+    <string name="nav_advanced">Advanced</string>
+    <string name="nav_about">About</string>
 </resources>

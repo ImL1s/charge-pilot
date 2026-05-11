@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="advanced_full_title">Advanced Full build</string>
+    <string name="advanced_full_body">Full builds control Samsung bypass charging through Shizuku after one user grant. Root is not required. Normal Android Modify system settings access was tested on S24 Ultra and did not write Samsung pass_through.</string>
+    <string name="advanced_shizuku_title">Shizuku app control</string>
+    <string name="advanced_shizuku_body">Shizuku is the app-control backend for Samsung S24 Ultra. Charge Pilot cannot bundle, silently install, or silently start Shizuku, but after setup Home controls the setting from inside Charge Pilot.</string>
+    <string name="advanced_shizuku_step_install">Install/open Shizuku from the official source.</string>
+    <string name="advanced_shizuku_step_wireless_debugging">Enable Developer options and Wireless debugging.</string>
+    <string name="advanced_shizuku_step_pair_start">Pair and start Shizuku from the Shizuku app.</string>
+    <string name="advanced_shizuku_step_grant">Return to Charge Pilot and grant permission when prompted.</string>
+    <string name="advanced_shizuku_step_use_home">Use Home -> Turn on bypass charging. Reopen Shizuku after a reboot because the service usually stops.</string>
+    <string name="advanced_samsung_limit_title">Samsung fallback limitation</string>
+    <string name="advanced_samsung_limit_body">Samsung permission-gates hidden Game Booster settings pages from third-party apps. Charge Pilot controls the settings key directly when possible and keeps Gaming Hub only as a fallback.</string>
+    <string name="advanced_install_open_shizuku">Install / open Shizuku</string>
+    <string name="advanced_open_developer_options">Open Developer options</string>
+    <string name="advanced_official_shizuku_guide">Official Shizuku guide</string>
+    <string name="advanced_play_title">Advanced features in Play build</string>
+    <string name="advanced_play_body">The Play build does not ship Shizuku or root modules. Samsung S24 Ultra app control needs the Full build because normal Android Modify system settings access did not write Samsung pass_through in testing.</string>
+    <string name="advanced_play_samsung_fallback_title">Samsung fallback</string>
+    <string name="advanced_play_samsung_fallback_body">Use Home -> Open fallback path, then in Gaming Hub open More -> Game Booster settings -> Pause USB PD charging when gaming.</string>
+    <string name="advanced_play_step_pd">Use a USB PD/PPS charger.</string>
+    <string name="advanced_play_step_battery" formatted="false">Keep battery above Samsung threshold, typically 20%.</string>
+    <string name="advanced_play_step_game">Launch a game so Game Booster can apply the setting.</string>
+    <string name="advanced_play_need_control_title">Need app control?</string>
+    <string name="advanced_play_need_control_body">Install the Full build from a trusted non-Play release channel and set up Shizuku with Wireless debugging. Root is optional.</string>
+</resources>

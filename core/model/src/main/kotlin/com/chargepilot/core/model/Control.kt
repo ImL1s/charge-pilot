@@ -1,5 +1,7 @@
 package com.chargepilot.core.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * A capability's runtime state. The UI MUST distinguish [Active] from [PendingConditions]
  * — a write to a settings key may have succeeded while the OEM's preconditions
@@ -50,10 +52,25 @@ enum class FailureReason {
     UNKNOWN,
 }
 
+enum class ControlSetupStage {
+    NOT_INSTALLED,
+    INSTALLED_NOT_RUNNING,
+    PERMISSION_REQUIRED,
+    READY,
+    UNAVAILABLE,
+    UNSUPPORTED,
+}
+
+data class ControlSetupStatus(
+    val method: ControlMethod,
+    val stage: ControlSetupStage,
+)
+
 /**
  * Metadata about a single user-initiated operation, persisted to local history so the user
  * can audit and revert. **Never sent off-device.**
  */
+@Serializable
 data class OperationRecord(
     val id: String,
     val capability: CapabilityType,

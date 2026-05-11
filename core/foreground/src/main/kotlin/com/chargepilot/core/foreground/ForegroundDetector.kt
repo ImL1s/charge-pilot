@@ -1,14 +1,76 @@
 package com.chargepilot.core.foreground
 
+import android.app.usage.UsageEvents
+import android.app.usage.UsageStatsManager
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Stub. Real impl uses `UsageStatsManager`. Always returns null until the
- * `PACKAGE_USAGE_STATS` flow is wired.
- */
+/** Uses UsageStatsManager to estimate the current foreground app when Usage access is granted. */
 @Singleton
-class ForegroundDetector @Inject constructor() {
-    fun currentForegroundPackage(): String? = null
-    fun isPackageInForeground(packageName: String): Boolean = false
+class ForegroundDetector @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
+    fun currentForegroundPackage(): String? {
+        val usageStats = context.getSystemService(UsageStatsManager::class.java) ?: return null
+        val now = System.currentTimeMillis()
+        return latestForegroundPackage(usageStats, now - RECENT_LOOKBACK_MS, now)
+            ?: latestForegroundPackage(usageStats, now - FALLBACK_LOOKBACK_MS, now)
+    }
+
+    fun isPackageInForeground(packageName: String): Boolean =
+        currentForegroundPackage() == packageName
+
+    fun isGameInForeground(knownGames: Set<String>?): Boolean {
+        val packageName = currentForegroundPackage() ?: return false
+        if (knownGames != null) return packageName in knownGames
+        return isGamePackage(packageName)
+    }
+
+    private fun isGamePackage(packageName: String): Boolean = runCatching {
+        val info = context.packageManager.getApplicationInfo(packageName, 0)
+        info.category == ApplicationInfo.CATEGORY_GAME
+    }.getOrDefault(false)
+
+    private fun latestForegroundPackage(
+        usageStats: UsageStatsManager,
+        startTimeMs: Long,
+        endTimeMs: Long,
+    ): String? = runCatching {
+        val events = usageStats.queryEvents(startTimeMs, endTimeMs)
+        val event = UsageEvents.Event()
+        val foregroundPackages = linkedMapOf<String, Long>()
+        var latestPackage: String? = null
+        var latestTimestamp = Long.MIN_VALUE
+
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event)
+            when (event.eventType) {
+                UsageEvents.Event.ACTIVITY_RESUMED,
+                UsageEvents.Event.MOVE_TO_FOREGROUND -> {
+                    foregroundPackages[event.packageName] = event.timeStamp
+                    if (event.timeStamp >= latestTimestamp) {
+                        latestTimestamp = event.timeStamp
+                        latestPackage = event.packageName
+                    }
+                }
+                UsageEvents.Event.ACTIVITY_PAUSED,
+                UsageEvents.Event.MOVE_TO_BACKGROUND -> {
+                    foregroundPackages.remove(event.packageName)
+                    if (latestPackage == event.packageName) {
+                        latestPackage = foregroundPackages.maxByOrNull { it.value }?.key
+                        latestTimestamp = foregroundPackages[latestPackage] ?: Long.MIN_VALUE
+                    }
+                }
+            }
+        }
+        latestPackage ?: foregroundPackages.maxByOrNull { it.value }?.key
+    }.getOrNull()
+
+    private companion object {
+        const val RECENT_LOOKBACK_MS = 15_000L
+        const val FALLBACK_LOOKBACK_MS = 60_000L
+    }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Charge Pilot</string>
+    <string name="nav_home">首頁</string>
+    <string name="nav_brands">品牌</string>
+    <string name="nav_history">紀錄</string>
+    <string name="nav_advanced">進階</string>
+    <string name="nav_about">關於</string>
+</resources>

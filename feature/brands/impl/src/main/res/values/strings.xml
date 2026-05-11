@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="brands_loading_title">Loading brand matrix…</string>
+    <string name="brands_loading_body">Reading the bundled capability registry.</string>
+    <string name="brands_error_title">Brand matrix unavailable</string>
+    <string name="brands_ready_title">Brand support matrix</string>
+    <string name="brands_ready_body">These entries are the exact rules bundled in this build. Use Home for your detected phone; use this tab to compare manual and direct-control support by manufacturer.</string>
+    <string name="brands_route_format">Route: %1$s</string>
+    <string name="brands_manual_path_format">Manual path: %1$s</string>
+    <string name="brands_models_format">Models: %1$s</string>
+    <string name="brands_min_rom_format">Minimum ROM: %1$s %2$s</string>
+    <string name="brands_all_supported_format">All supported %1$s models</string>
+    <string name="brands_recorded_unsupported">Recorded as unsupported</string>
+    <string name="brands_verified_format">%1$s · verified %2$s</string>
+    <string name="brands_source_recorded_format">%1$s · source recorded</string>
+
+    <string name="brands_cap_pause_pd">Pause USB PD while gaming</string>
+    <string name="brands_cap_bypass">Bypass charging</string>
+    <string name="brands_cap_charge_separation">Charge separation</string>
+    <string name="brands_cap_battery_limit_80" formatted="false">80% battery limit</string>
+    <string name="brands_cap_adaptive_charging">Adaptive charging</string>
+    <string name="brands_cap_smart_charging">Smart charging</string>
+    <string name="brands_cap_custom_charge_limit">Custom charge limit</string>
+    <string name="brands_method_official">Official/manual guide</string>
+    <string name="brands_method_write_settings">Android settings write</string>
+    <string name="brands_method_shizuku">Shizuku one-tap</string>
+    <string name="brands_method_root">Root shell</string>
+    <string name="brands_evidence_official_doc">Official documentation</string>
+    <string name="brands_evidence_official_community">Official community</string>
+    <string name="brands_evidence_community_tested">Community tested</string>
+    <string name="brands_evidence_project_verified">Project verified</string>
+    <string name="brands_evidence_unverified">Unverified</string>
+</resources>

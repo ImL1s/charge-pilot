@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Special access permissions; all user-grantable. -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" xmlns:tools="http://schemas.android.com/tools" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" xmlns:tools="http://schemas.android.com/tools" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
 
     <!-- Network only used for non-blocking capability registry OTA fetch. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <queries>
+        <package android:name="moe.shizuku.privileged.api" />
+        <package android:name="com.android.vending" />
+        <package android:name="com.sec.android.app.samsungapps" />
+        <package android:name="com.samsung.android.game.gamehome" />
+        <package android:name="com.samsung.android.game.gametools" />
+        <package android:name="com.samsung.android.game.gos" />
+        <package android:name="com.samsung.android.goodlock" />
+        <package android:name="com.samsung.android.game.gamelab" />
+        <package android:name="com.samsung.android.game.gameboosterplus" />
+    </queries>
 
     <application
         android:name=".ChargePilotApp"

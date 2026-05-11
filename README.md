@@ -25,14 +25,16 @@ Pre-alpha. Architecture and brand support matrix are public; runtime control is 
 
 | Brand | Tier | Methods | Source |
 |---|---|---|---|
-| Samsung Galaxy | S1 | Official guidance + `pass_through` (whitelist) | Samsung official + community-tested |
-| Google Pixel | S2 | Battery Saver / 80% limit guidance only | Pixel official |
-| OnePlus | S2 | Official guidance + Shizuku (full only) | OnePlus official |
-| Xiaomi/Redmi/POCO | S2 | Official guidance + Shizuku (full only) | Mixed sources |
-| HONOR | S2 | Official Game Manager guidance | HONOR official |
-| Huawei | S3 | Unverified placeholder | — |
+| Samsung Galaxy S/Z | S2 | Official Game Booster guide in-app; full flavor Shizuku only for verified `pass_through` devices | Samsung official; S24U direct Game Booster activity is signature-gated |
+| Google Pixel | S2 | Charging optimization / Adaptive Charging / 80% limit guidance | Pixel official |
+| OnePlus | S2 | OxygenOS 16 bypass charging guidance on supported models | OnePlus official community OTA notes |
+| Xiaomi/Redmi/POCO | S2 | Battery protection / optimized charging guidance; POCO F7 bypass explicitly unsupported | Xiaomi official FAQs |
+| HONOR | S2 | Smart Charge / Smart Battery Capacity guidance | HONOR official |
+| Huawei | S2 | Smart Charge / Custom limit guidance | Huawei official |
 
-S1 = full strategy verified · S2 = official + Shizuku in full flavor · S3 = unverified.
+S1 = direct strategy fully verified · S2 = official guidance or privileged path only · S3 = unverified.
+
+See [docs/brand-methods.md](docs/brand-methods.md) for the current per-brand evidence table. Direct control is hidden unless the bundled registry has both a direct method and a verified writable key.
 
 ## License
 

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detected_device">Detected device</string>
+    <string name="rom_unknown">ROM unknown</string>
+    <string name="rom_android_format">%1$s · Android %2$s (API %3$d)</string>
+    <string name="codename_format">Codename: %1$s</string>
+
+    <string name="fallback_path_format">Fallback path: %1$s</string>
+    <string name="fallback_notes">Fallback notes</string>
+    <string name="setup_app_control_shizuku">Set up app control (Shizuku)</string>
+    <string name="setup_shizuku_fallback">Set up Shizuku fallback</string>
+    <string name="open_fallback_path">Open fallback path</string>
+
+    <string name="state_ready_to_check">App control: ready to check</string>
+    <string name="state_off">App control: off</string>
+    <string name="state_on_checking">Bypass setting is ON. Checking live requirements…</string>
+    <string name="state_waiting_format">Bypass setting is ON. Waiting for %1$s.</string>
+    <string name="state_active">Bypass charging is active now.</string>
+    <string name="live_requirements">Live requirements</string>
+    <string name="condition_tip">Tip: Samsung may briefly renegotiate after a cable change. If USB PD/PPS stays waiting, reconnect the cable or check Super fast charging in Samsung Battery settings.</string>
+
+    <string name="condition_ready">Ready</string>
+    <string name="condition_waiting">Waiting</string>
+    <string name="condition_required">Required</string>
+    <string name="condition_checking">Checking</string>
+
+    <string name="precondition_pd_charger">USB PD/PPS fast charger detected</string>
+    <string name="precondition_battery_above_format">Battery above %1$d%%</string>
+    <string name="precondition_game_foreground">Supported game in foreground</string>
+    <string name="summary_live_requirements">live requirements</string>
+    <string name="summary_pd_charger">a USB PD/PPS fast charger</string>
+    <string name="summary_battery_above_format">battery above %1$d%%</string>
+    <string name="summary_game_foreground">a supported game in foreground</string>
+    <string name="summary_two_format">%1$s and %2$s</string>
+    <string name="summary_many_format">%1$s, and %2$s</string>
+
+    <string name="cap_pause_pd">Pause USB PD while gaming</string>
+    <string name="cap_bypass">Bypass charging</string>
+    <string name="cap_charge_separation">Charge separation</string>
+    <string name="cap_battery_limit_80" formatted="false">80% battery limit</string>
+    <string name="cap_adaptive_charging">Adaptive charging</string>
+    <string name="cap_smart_charging">Smart charging</string>
+    <string name="cap_custom_charge_limit">Custom charge limit</string>
+
+    <string name="method_official">Official/manual guide</string>
+    <string name="method_write_settings">in-app settings write</string>
+    <string name="method_shizuku">Shizuku one-tap</string>
+    <string name="method_root">Root shell</string>
+
+    <string name="setup_title_install_shizuku">Step 1 of 3: install Shizuku</string>
+    <string name="setup_title_start_shizuku">Step 2 of 3: start Shizuku</string>
+    <string name="setup_title_grant_charge_pilot">Step 3 of 3: grant Charge Pilot</string>
+    <string name="setup_title_unavailable">Shizuku app control is unavailable</string>
+    <string name="setup_title_unsupported">Shizuku app control is unsupported</string>
+    <string name="setup_title_ready">Shizuku app control is ready</string>
+    <string name="setup_detail_install_shizuku">Install Shizuku from the official page, then return to Charge Pilot. Charge Pilot will continue from the next step.</string>
+    <string name="setup_detail_start_shizuku">Open Shizuku, start it with Wireless debugging, then return to Charge Pilot. Root is not required.</string>
+    <string name="setup_detail_grant_charge_pilot">Request the Shizuku permission here, approve the prompt, then Charge Pilot can control bypass charging.</string>
+    <string name="setup_detail_unavailable">This build sees the Shizuku route, but the device is not ready for app control yet.</string>
+    <string name="setup_detail_unsupported">This capability does not allow Shizuku control.</string>
+    <string name="setup_detail_ready">Use the Turn on/off bypass charging button in Charge Pilot.</string>
+    <string name="setup_button_install_shizuku">Install Shizuku</string>
+    <string name="setup_button_open_shizuku">Open Shizuku</string>
+    <string name="setup_button_grant_shizuku">Grant Shizuku permission</string>
+    <string name="setup_button_open_shizuku_setup">Open Shizuku setup</string>
+    <string name="setup_button_set_up_app_control">Set up app control</string>
+    <string name="setup_button_ready">App control ready</string>
+
+    <string name="action_turn_off_bypass">Turn off bypass charging</string>
+    <string name="action_turn_on_bypass">Turn on bypass charging</string>
+    <string name="action_turn_off">Turn off</string>
+    <string name="action_turn_on">Turn on</string>
+
+
+    <string name="evidence_official_doc">Official documentation</string>
+    <string name="evidence_official_community">Official community</string>
+    <string name="evidence_community_tested">Community tested</string>
+    <string name="evidence_project_verified">Project verified</string>
+    <string name="evidence_unverified">Unverified</string>
+
+    <string name="evidence_prefix">Evidence: %1$s</string>
+    <string name="evidence_verified_format">%1$s · verified %2$s</string>
+    <string name="route_app_control_format">App control route: %1$s</string>
+    <string name="route_needs_setup_format">App control needs setup: %1$s</string>
+    <string name="route_exists_inactive">App control exists for this capability but is not active in this build.</string>
+    <string name="route_manual_available">No app-control backend is active; manual fallback is available.</string>
+    <string name="route_none_registered">No supported control route is registered for this capability.</string>
+</resources>

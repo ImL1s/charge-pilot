@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_loading">正在偵測裝置…</string>
+    <string name="home_error_format">錯誤：%1$s</string>
+    <string name="home_app_control_title">App 內控制</string>
+    <string name="home_no_capabilities">此裝置尚未登錄支援能力。請到品牌頁面查看更多資訊。</string>
+    <string name="home_summary_active">旁路充電目前已生效。此畫面開啟時會即時刷新。</string>
+    <string name="home_summary_pending">旁路設定已開啟。Charge Pilot 正在監看充電器、電量與遊戲條件。</string>
+    <string name="home_summary_engaged">旁路設定已開啟。Charge Pilot 正在檢查即時條件。</string>
+    <string name="home_summary_ready">App 內控制已就緒。請使用下方開啟／關閉旁路充電按鈕。</string>
+    <string name="home_summary_install_shizuku">從這裡安裝 Shizuku，回到 Charge Pilot 後繼續設定。</string>
+    <string name="home_summary_start_shizuku">從這裡開啟 Shizuku，使用無線偵錯啟動後回到 Charge Pilot。</string>
+    <string name="home_summary_grant_shizuku">從這裡授權 Charge Pilot，之後即可用 Charge Pilot 控制旁路充電。</string>
+    <string name="home_summary_can_control_after_setup">完成 Shizuku 設定後，此版本可控制旁路充電。</string>
+    <string name="home_summary_no_backend">此裝置目前沒有登錄 App 控制後端；仍可使用下方備用路徑。</string>
+    <string name="home_empty_step_brands">開啟品牌頁，查看目前已整理的品牌與充電模式。</string>
+    <string name="home_empty_step_manual">在此型號加入前，請先使用手機電池設定中的手動充電保護。</string>
+    <string name="home_fallback_step_only_when_needed">只有在 Charge Pilot 沒有此裝置的 App 控制後端時，才使用備用路徑。</string>
+    <string name="home_fallback_step_history">紀錄頁會記下每次本機跳轉或操作。</string>
+
+    <string name="home_method_official">官方指南</string>
+    <string name="home_method_write_settings">App 內控制</string>
+    <string name="home_method_shizuku">Shizuku</string>
+    <string name="home_method_root">Root shell</string>
+    <string name="home_status_control_success_format">%1$s：旁路充電設定已變更</string>
+    <string name="home_status_opened_settings_format">%1$s：已開啟設定</string>
+    <string name="home_status_grant_write_settings">App 內控制需要一個 Android 授權：請啟用 Charge Pilot 的「修改系統設定」，回來後再點擊開啟旁路充電。</string>
+    <string name="home_status_shizuku_not_running">Shizuku 已安裝但尚未執行。請開啟 Shizuku，用無線偵錯啟動後回到 Charge Pilot。</string>
+    <string name="home_status_shizuku_permission_required">Shizuku 正在執行，但 Charge Pilot 仍需要授權。請點擊授予 Shizuku 權限並同意提示。</string>
+    <string name="home_status_control_failed_format">%1$s：失敗（%2$s）</string>
+    <string name="home_status_setup_permission_format">%1$s：請授予修改系統設定，回來後再點擊開啟旁路充電</string>
+    <string name="home_status_setup_app_format">%1$s：已開啟設定 App</string>
+    <string name="home_status_setup_installer_format">%1$s：已開啟安裝頁</string>
+    <string name="home_status_setup_requested_permission_format">%1$s：請同意權限提示後返回</string>
+    <string name="home_status_setup_ready_format">%1$s：App 內控制已就緒</string>
+    <string name="home_status_setup_unsupported_format">%1$s：此設定方式不支援</string>
+    <string name="home_status_setup_failed_format">%1$s：找不到設定 App</string>
+    <string name="home_status_samsung_classification_opened">已開啟 Samsung 遊戲分類。請使用 Game category settings，把目標 App 標成 Game 後再啟動。</string>
+    <string name="home_status_samsung_classification_installer">已開啟 Galaxy Store 的 Game Booster+ 頁面。請安裝後開啟 Game category settings，並把目標 App 標成 Game。</string>
+    <string name="home_status_samsung_classification_failed">無法開啟 Samsung 遊戲分類設定。</string>
+    <string name="home_status_samsung_gaming_hub_opened">已開啟 Gaming Hub。可從這裡進入 Game Booster 設定；一般 App 分類仍需要 Game Booster+。</string>
+    <string name="home_status_samsung_gaming_hub_failed">此裝置無法開啟 Gaming Hub。</string>
+
+    <string name="samsung_game_title">一般 App 需要 Samsung 遊戲分類</string>
+    <string name="samsung_game_body">Samsung 旁路充電只會在 Game Booster 遊戲工作階段生效。只把捷徑加入 Gaming Hub 不夠。</string>
+    <string name="samsung_game_instruction">安裝 Game Plugins + Game Booster+。在 Game Booster+ → Game category settings，把目標 App 標成 Game，再啟動它。</string>
+    <string name="samsung_game_stack">Samsung 遊戲套件</string>
+    <string name="samsung_game_ready">就緒</string>
+    <string name="samsung_game_missing">缺少</string>
+    <string name="samsung_game_plugins_host">Game Plugins 主程式</string>
+    <string name="samsung_game_booster_plus_module">Game Booster+ 模組</string>
+    <string name="samsung_game_installed">已安裝</string>
+    <string name="samsung_game_install_required">需要安裝</string>
+    <string name="samsung_game_compatibility">Game Booster+ 相容性</string>
+    <string name="samsung_game_blocked">受阻</string>
+    <string name="samsung_game_open_hub_booster">開啟 Gaming Hub / Game Booster</string>
+    <string name="samsung_game_good_lock">Good Lock</string>
+    <string name="samsung_game_optional">可選</string>
+    <string name="samsung_game_action_install_plugins">安裝 Game Plugins</string>
+    <string name="samsung_game_action_install_booster_plus">安裝 Game Booster+</string>
+    <string name="samsung_game_action_open_anyway">仍然開啟 Game Booster+</string>
+    <string name="samsung_game_action_open_classification">開啟遊戲分類</string>
+    <string name="samsung_game_s24u_gos_lite_block">此 S24 Ultra One UI 8 版本回傳「Unable to run: GOS Lite」；此韌體阻擋一般 App 遊戲分類。</string>
+</resources>

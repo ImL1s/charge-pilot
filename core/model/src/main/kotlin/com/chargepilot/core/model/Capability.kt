@@ -9,6 +9,8 @@ enum class CapabilityType {
     CHARGE_SEPARATION,
     BATTERY_LIMIT_80,
     ADAPTIVE_CHARGING,
+    SMART_CHARGING,
+    CUSTOM_CHARGE_LIMIT,
 }
 
 @Serializable
@@ -38,6 +40,7 @@ data class SettingsKey(
 @Serializable
 data class IntentSpec(
     val action: String,
+    val categories: List<String> = emptyList(),
     val component: String? = null,
     val fallbackPath: String? = null,
 )
@@ -74,6 +77,7 @@ data class CapabilityDescriptor(
     val availableMethods: List<ControlMethod>,
     val settingsKey: SettingsKey? = null,
     val officialIntent: IntentSpec? = null,
+    val guidanceSteps: List<String> = emptyList(),
     val preconditions: List<Precondition> = emptyList(),
     val evidence: Evidence,
     val sourceUrl: String? = null,

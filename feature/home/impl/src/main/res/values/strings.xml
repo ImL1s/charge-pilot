@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_loading">Detecting device…</string>
+    <string name="home_error_format">Error: %1$s</string>
+    <string name="home_app_control_title">App control</string>
+    <string name="home_no_capabilities">No registered capabilities for this device. Try the Brands page to learn more.</string>
+    <string name="home_summary_active">Bypass charging is active now. This screen refreshes live while it is open.</string>
+    <string name="home_summary_pending">Bypass setting is ON. Charge Pilot is watching charger, battery, and game conditions below.</string>
+    <string name="home_summary_engaged">Bypass setting is ON. Charge Pilot is checking live conditions now.</string>
+    <string name="home_summary_ready">App control is ready. Use the Turn on/off bypass charging button below.</string>
+    <string name="home_summary_install_shizuku">Install Shizuku from here, return to Charge Pilot, then continue setup.</string>
+    <string name="home_summary_start_shizuku">Open Shizuku from here, start it with Wireless debugging, then return to Charge Pilot.</string>
+    <string name="home_summary_grant_shizuku">Grant Charge Pilot permission from here, then use Charge Pilot to control bypass charging.</string>
+    <string name="home_summary_can_control_after_setup">This build can control bypass charging after Shizuku setup is complete.</string>
+    <string name="home_summary_no_backend">No app-control backend is currently registered for this device. The fallback path remains available below.</string>
+    <string name="home_empty_step_brands">Open Brands to see which manufacturers and charging modes are currently mapped.</string>
+    <string name="home_empty_step_manual">Use your phone Battery settings for manual charging protection until this model is added.</string>
+    <string name="home_fallback_step_only_when_needed">Open fallback path only when Charge Pilot has no app-control backend for this device.</string>
+    <string name="home_fallback_step_history">History records each local handoff.</string>
+
+    <string name="home_method_official">Official guide</string>
+    <string name="home_method_write_settings">App control</string>
+    <string name="home_method_shizuku">Shizuku</string>
+    <string name="home_method_root">Root shell</string>
+    <string name="home_status_control_success_format">%1$s: bypass charging setting changed</string>
+    <string name="home_status_opened_settings_format">%1$s: opened settings</string>
+    <string name="home_status_grant_write_settings">App control needs one Android grant: enable Modify system settings for Charge Pilot, return, then tap Turn on bypass charging again.</string>
+    <string name="home_status_shizuku_not_running">Shizuku is installed but not running. Open Shizuku, start it with Wireless debugging, then return to Charge Pilot.</string>
+    <string name="home_status_shizuku_permission_required">Shizuku is running but Charge Pilot still needs permission. Tap Grant Shizuku permission and approve the prompt.</string>
+    <string name="home_status_control_failed_format">%1$s: failed (%2$s)</string>
+    <string name="home_status_setup_permission_format">%1$s: grant Modify system settings, return, then tap Turn on bypass charging again</string>
+    <string name="home_status_setup_app_format">%1$s: opened setup app</string>
+    <string name="home_status_setup_installer_format">%1$s: opened install page</string>
+    <string name="home_status_setup_requested_permission_format">%1$s: approve the permission prompt, then return</string>
+    <string name="home_status_setup_ready_format">%1$s: app control is ready</string>
+    <string name="home_status_setup_unsupported_format">%1$s: setup is not supported</string>
+    <string name="home_status_setup_failed_format">%1$s: no setup app found</string>
+    <string name="home_status_samsung_classification_opened">Opened Samsung game classification. Use Game category settings, mark the target app as Game, then launch it.</string>
+    <string name="home_status_samsung_classification_installer">Opened Galaxy Store for Game Booster+. Install it, open Game category settings, then mark the target app as Game.</string>
+    <string name="home_status_samsung_classification_failed">Could not open Samsung game classification setup.</string>
+    <string name="home_status_samsung_gaming_hub_opened">Opened Gaming Hub. Use it to reach Game Booster settings; app-as-game classification still needs Game Booster+.</string>
+    <string name="home_status_samsung_gaming_hub_failed">Could not open Gaming Hub on this device.</string>
+
+    <string name="samsung_game_title">Normal apps need Samsung game classification</string>
+    <string name="samsung_game_body">Samsung bypass charging only engages during a Game Booster game session. Adding a shortcut to Gaming Hub is not enough.</string>
+    <string name="samsung_game_instruction">Install Game Plugins + Game Booster+. In Game Booster+ → Game category settings, mark the target app as Game, then launch it.</string>
+    <string name="samsung_game_stack">Samsung game stack</string>
+    <string name="samsung_game_ready">Ready</string>
+    <string name="samsung_game_missing">Missing</string>
+    <string name="samsung_game_plugins_host">Game Plugins host</string>
+    <string name="samsung_game_booster_plus_module">Game Booster+ module</string>
+    <string name="samsung_game_installed">Installed</string>
+    <string name="samsung_game_install_required">Install required</string>
+    <string name="samsung_game_compatibility">Game Booster+ compatibility</string>
+    <string name="samsung_game_blocked">Blocked</string>
+    <string name="samsung_game_open_hub_booster">Open Gaming Hub / Game Booster</string>
+    <string name="samsung_game_good_lock">Good Lock</string>
+    <string name="samsung_game_optional">Optional</string>
+    <string name="samsung_game_action_install_plugins">Install Game Plugins</string>
+    <string name="samsung_game_action_install_booster_plus">Install Game Booster+</string>
+    <string name="samsung_game_action_open_anyway">Open Game Booster+ anyway</string>
+    <string name="samsung_game_action_open_classification">Open game classification</string>
+    <string name="samsung_game_s24u_gos_lite_block">This S24 Ultra One UI 8 build returned “Unable to run: GOS Lite”; normal-app game classification is blocked on this firmware.</string>
+</resources>

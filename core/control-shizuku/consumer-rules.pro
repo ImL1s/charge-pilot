@@ -1,0 +1,2 @@
+-keep class com.chargepilot.core.control.shizuku.ShizukuSettingsUserService { *; }
+-keep class com.chargepilot.core.control.shizuku.IShizukuSettingsService { *; }

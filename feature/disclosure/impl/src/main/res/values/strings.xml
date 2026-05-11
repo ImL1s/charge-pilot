@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="disclosure_title">Capability disclosure</string>
+    <string name="disclosure_body_format">This screen explains the local safety contract for capability %1$s before Charge Pilot opens a setup route or attempts app-controlled writes.</string>
+    <string name="disclosure_local_title">Local-only control</string>
+    <string name="disclosure_local_body">Charge Pilot stores attempts on this device and does not upload operation history.</string>
+    <string name="disclosure_safety_title">What to check first</string>
+    <string name="disclosure_step_user_initiated">Only continue when you initiated the setup or toggle action.</string>
+    <string name="disclosure_step_preconditions">Confirm charger, battery, foreground app, and brand-specific requirements in Home.</string>
+    <string name="disclosure_step_shizuku">For Full builds, Shizuku control requires Shizuku installed, running, and authorized.</string>
+    <string name="disclosure_step_samsung">Samsung Game Booster bypass still depends on Samsung firmware accepting the Game Optimizing Service path.</string>
+</resources>

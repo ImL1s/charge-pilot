@@ -3,6 +3,8 @@ package com.chargepilot.core.control
 import com.chargepilot.core.model.CapabilityDescriptor
 import com.chargepilot.core.model.ControlMethod
 import com.chargepilot.core.model.ControlResult
+import com.chargepilot.core.model.ControlSetupStage
+import com.chargepilot.core.model.ControlSetupStatus
 import com.chargepilot.core.model.ControlState
 import com.chargepilot.core.model.DeviceProfile
 
@@ -22,6 +24,22 @@ interface ControlStrategy {
         profile: DeviceProfile,
         descriptor: CapabilityDescriptor,
     ): Boolean
+
+    suspend fun setupStatus(
+        profile: DeviceProfile,
+        descriptor: CapabilityDescriptor,
+    ): ControlSetupStatus =
+        ControlSetupStatus(
+            method = method,
+            stage = if (isAvailable(profile, descriptor)) {
+                ControlSetupStage.READY
+            } else {
+                ControlSetupStage.UNAVAILABLE
+            },
+        )
+
+    suspend fun requestSetupAuthorization(descriptor: CapabilityDescriptor): SetupNavigationResult =
+        SetupNavigationResult.Unsupported
 
     suspend fun getCurrentState(descriptor: CapabilityDescriptor): ControlState
 

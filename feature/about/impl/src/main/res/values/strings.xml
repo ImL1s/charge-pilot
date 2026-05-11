@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_title_app">Charge Pilot</string>
+    <string name="about_body_app">A cross-brand charging control app. On supported phones it can toggle bypass charging or charge limits from inside Charge Pilot, with OEM screens kept as fallback.</string>
+    <string name="about_title_privacy">Privacy and safety</string>
+    <string name="about_body_privacy">No telemetry, no cloud sync, and no background privileged actions. Operation history is stored locally on this device only.</string>
+    <string name="about_step_manual_first">Manual OEM settings are always preferred when available.</string>
+    <string name="about_step_app_control_condition">App control only appears when a matching strategy is installed and available.</string>
+    <string name="about_step_reversible">Settings writes are reversible from Home or the OEM settings page.</string>
+    <string name="about_title_build_boundaries">Build boundaries</string>
+    <string name="about_body_build_boundaries">Play builds keep non-privileged routes and fallback navigation. Full builds add Shizuku/root modules for ROMs that block normal writes; Samsung S24 Ultra app control uses Shizuku, not root.</string>
+    <string name="about_title_license">License</string>
+    <string name="about_body_license">Open source under AGPL-3.0. Brand entries come from the bundled registry and include evidence labels and verified dates where available.</string>
+</resources>
