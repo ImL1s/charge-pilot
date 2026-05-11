@@ -1,0 +1,49 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+local.properties
+
+# Kotlin compiler sessions cache
+.kotlin/
+
+# Android
+*.iml
+.idea/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Keystore
+*.jks
+*.keystore
+keystore.properties
+
+# IDE
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Test
+/test-results/
+/coverage/
+*.exec
+
+# OMC (orchestration artifacts; internal only)
+.omc/
+
+# Claude Code local config / plugin overrides
+.claude/
+CLAUDE.md.local
+
+# Generated
+*.hprof
+fastlane/report.xml
+fastlane/Preview.html

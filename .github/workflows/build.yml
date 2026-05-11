@@ -1,0 +1,91 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run unit tests across all modules
+        run: ./gradlew test
+
+      - name: Lint (debug variants of both flavors)
+        run: ./gradlew lintPlayDebug lintFullDebug
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/lint-results-*.html
+            **/build/reports/lint-results-*.xml
+          retention-days: 14
+
+  apk:
+    needs: quality
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - flavor: play
+            debugTask: assemblePlayDebug
+            releaseTask: assemblePlayRelease
+          - flavor: full
+            debugTask: assembleFullDebug
+            releaseTask: assembleFullRelease
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Assemble ${{ matrix.flavor }} debug
+        run: ./gradlew :app:${{ matrix.debugTask }}
+
+      - name: Assemble ${{ matrix.flavor }} release (validates R8 shrink/minify keep rules; unsigned)
+        run: ./gradlew :app:${{ matrix.releaseTask }}
+
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: charge-pilot-${{ matrix.flavor }}-debug
+          path: app/build/outputs/apk/${{ matrix.flavor }}/debug/*.apk
+          retention-days: 14
+
+      - name: Upload release APK (unsigned)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: charge-pilot-${{ matrix.flavor }}-release-unsigned
+          path: app/build/outputs/apk/${{ matrix.flavor }}/release/*.apk
+          retention-days: 14

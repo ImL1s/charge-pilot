@@ -1,0 +1,33 @@
+Charge Pilot
+Copyright (C) 2026 Charge Pilot contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+---
+
+Third-party libraries used by Charge Pilot (full list at build time via
+`./gradlew :app:licenseReport`):
+
+- AndroidX Compose, Lifecycle, Navigation, DataStore — Apache-2.0
+- Kotlin and kotlinx.coroutines, kotlinx.serialization — Apache-2.0
+- Hilt / Dagger — Apache-2.0
+- Timber — Apache-2.0
+- Shizuku (full flavor only) — Apache-2.0
+- libsu (full flavor only) — Apache-2.0
+- Fira Code, Fira Sans (when bundled) — SIL Open Font License 1.1
+
+Trademarks: "Samsung", "Galaxy", "One UI", "Google", "Pixel", "OnePlus", "OxygenOS",
+"Xiaomi", "Redmi", "POCO", "HyperOS", "MIUI", "HONOR", "MagicOS", "Huawei", and
+"EMUI" are property of their respective owners. Charge Pilot is not affiliated
+with, endorsed by, or sponsored by any of these companies.

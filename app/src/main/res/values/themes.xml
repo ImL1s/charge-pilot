@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme used while Compose loads. Compose then takes over via ChargePilotTheme. -->
+    <style name="Theme.ChargePilot" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash theme for the launcher activity. -->
+    <style name="Theme.ChargePilot.Splash" parent="Theme.ChargePilot">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

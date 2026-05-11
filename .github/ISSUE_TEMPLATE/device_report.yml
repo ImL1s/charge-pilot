@@ -1,0 +1,67 @@
+name: Device support report
+description: Report whether your device supports a charging-related feature so we can update the registry.
+title: "[device] <manufacturer> <model> — <capability>"
+labels: ["device-matrix"]
+body:
+  - type: dropdown
+    id: manufacturer
+    attributes:
+      label: Manufacturer
+      options:
+        - SAMSUNG
+        - GOOGLE
+        - ONEPLUS
+        - XIAOMI
+        - HONOR
+        - HUAWEI
+        - OTHER
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Build.MODEL
+      description: e.g. SM-S921B, Pixel 9 Pro, CPH2611
+    validations:
+      required: true
+  - type: input
+    id: rom
+    attributes:
+      label: ROM / firmware version
+      description: e.g. One UI 7.0, OxygenOS 15.0.1.300
+    validations:
+      required: true
+  - type: dropdown
+    id: capability
+    attributes:
+      label: Capability
+      options:
+        - PAUSE_PD_DURING_GAMING
+        - BYPASS_CHARGING
+        - CHARGE_SEPARATION
+        - BATTERY_LIMIT_80
+        - ADAPTIVE_CHARGING
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Works (official UI)
+        - Works (Charge Pilot experimental)
+        - Does not work
+        - Setting present but inactive
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: A screen recording, ADB log, or screenshots. PRs without evidence will be asked for one.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes

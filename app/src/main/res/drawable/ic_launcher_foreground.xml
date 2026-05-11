@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Charge Pilot launcher icon foreground: a stylised lightning bolt offset within an
+    inset rectangle, sized to fill the inner 66dp safe area of an adaptive icon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M62,28 L42,58 L52,58 L46,80 L66,50 L56,50 Z" />
+</vector>
