@@ -25,16 +25,16 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Run unit tests across all modules
         run: ./gradlew test
@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload lint reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-reports
           path: |
@@ -66,16 +66,16 @@ jobs:
             debugTask: assembleFullDebug
             releaseTask: assembleFullRelease
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Assemble ${{ matrix.flavor }} debug
         run: ./gradlew :app:${{ matrix.debugTask }}
@@ -85,7 +85,7 @@ jobs:
 
       - name: Upload debug APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: charge-pilot-${{ matrix.flavor }}-debug
           path: app/build/outputs/apk/${{ matrix.flavor }}/debug/*.apk
@@ -93,7 +93,7 @@ jobs:
 
       - name: Upload release APK (unsigned)
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: charge-pilot-${{ matrix.flavor }}-release-unsigned
           path: app/build/outputs/apk/${{ matrix.flavor }}/release/*.apk
@@ -107,16 +107,16 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Assemble Full release APK
         run: ./gradlew :app:assembleFullRelease
@@ -150,7 +150,7 @@ jobs:
           (cd dist && sha256sum *.apk > SHA256SUMS.txt)
 
       - name: Upload Full release artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: charge-pilot-full-release
           path: dist/*
