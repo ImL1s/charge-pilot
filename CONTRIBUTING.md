@@ -24,7 +24,8 @@ The most useful contribution is widening the support matrix. To add a new device
    - `PROJECT_VERIFIED` — *you* tested it on a physical device or emulator and have evidence.
    - `UNVERIFIED` — placeholder; do not ship.
 5. Attach evidence in your PR description: a screen recording, ADB output, or photo. PRs that change the registry without evidence will be asked for it.
-6. Run `./gradlew :core:capability:test` to make sure the schema validator still passes.
+6. If you add a **writable** settings key (`WRITE_SETTINGS_KEY` / `SHIZUKU_RPC`), also add the key name to `WritableSettingsKeys` in `core/model` in the **same PR**, and document rollback. The loader and strategies reject unknown keys.
+7. Run `./gradlew :core:capability:test` (and any new strategy tests) to make sure the schema validator and allowlist still pass.
 
 ## Code style
 

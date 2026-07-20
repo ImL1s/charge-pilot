@@ -36,4 +36,14 @@ Build conventions live in `build-logic/convention` (Android library/application,
 
 ## Network
 
-None in the current release. The capability registry is not fetched over the network. See `docs/PRIVACY.md` and plan 026 (signed OTA spike only).
+None in the current release. The capability registry is not fetched over the network. See `docs/PRIVACY.md` and [ota-registry.md](./ota-registry.md) (signed OTA **design spike only** — not shipped).
+
+## Related docs
+
+| Doc | Purpose |
+|-----|---------|
+| [control-strategies.md](./control-strategies.md) | Orchestrator, Engaged vs Active, allowlist |
+| [ota-registry.md](./ota-registry.md) | Future signed OTA requirements (not implemented) |
+| [../brand-methods.md](../brand-methods.md) | Per-brand evidence table |
+| [../research/](../research/) | Device-blocked spikes (intents, writable keys) |
+| [../../plans/README.md](../../plans/README.md) | Improve-deep plan backlog (001–030 executed) |

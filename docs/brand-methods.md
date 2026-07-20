@@ -1,6 +1,7 @@
 # Brand Charging Methods
 
-Last researched: 2026-05-11.
+Last researched: 2026-05-11.  
+**Code alignment note (2026-07-21):** Direct control also requires (1) an allowlisted key in `WritableSettingsKeys`, (2) first-use disclosure consent, and (3) read-after-write verification. See `docs/architecture/control-strategies.md`. Device-blocked research for the next Play Layer-2 key: `docs/research/writable-key-BLOCKED-needs-device.md`.
 
 Charge Pilot separates **official guidance** from **direct control**. A brand entry may open the manufacturer settings screen even when Android does not expose a safe app toggle.
 

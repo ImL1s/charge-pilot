@@ -1,21 +1,18 @@
 # Improve plans execution report
 
-**Branch (intended)**: `advisor/execute-all-improve-plans`  
-**Worktree**: current isolated worktree  
+**Branch**: `advisor/execute-all-improve-plans`  
+**Merged to `main`**: yes (fast-forward to `4e507aa`, 2026-07-21)  
 **Executor date**: 2026-07-21  
 
-## STATUS: PARTIAL
+## STATUS: MERGED (PARTIAL leftovers noted)
 
-Most P1 plans and the majority of P2/P3 items are implemented in the worktree.  
-**Git commits and Gradle verification could not be run from this agent session** (no shell/terminal tool available to the subagent). Parent/orchestrator should:
+Implementation landed on `main`. Advisor verification after execute:
 
 ```bash
-git checkout -b advisor/execute-all-improve-plans   # if not already
-git add -A && git status
 ./gradlew :core:model:test :core:capability:test :core:control:test :core:device:test :core:battery:test :core:domain:test :core:datastore:test :core:control-writesettings:test :feature:home:impl:test :feature:about:impl:test
+# BUILD SUCCESSFUL
 ./gradlew :app:assemblePlayDebug :app:assembleFullDebug
-./gradlew test
-# then conventional commits per plan group
+# BUILD SUCCESSFUL
 ```
 
 ## PLANS
