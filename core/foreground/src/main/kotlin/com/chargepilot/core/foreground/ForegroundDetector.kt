@@ -1,9 +1,11 @@
 package com.chargepilot.core.foreground
 
+import android.app.AppOpsManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import android.os.Process
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +15,22 @@ import javax.inject.Singleton
 class ForegroundDetector @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+    /**
+     * Best-effort: AppOps `GET_USAGE_STATS` mode allowed for this package.
+     * Missing permission must never be treated as "game not foreground is fine".
+     */
+    fun hasUsageAccess(): Boolean {
+        val appOps = context.getSystemService(AppOpsManager::class.java) ?: return false
+        val mode = appOps.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            Process.myUid(),
+            context.packageName,
+        )
+        return mode == AppOpsManager.MODE_ALLOWED
+    }
+
     fun currentForegroundPackage(): String? {
+        if (!hasUsageAccess()) return null
         val usageStats = context.getSystemService(UsageStatsManager::class.java) ?: return null
         val now = System.currentTimeMillis()
         return latestForegroundPackage(usageStats, now - RECENT_LOOKBACK_MS, now)

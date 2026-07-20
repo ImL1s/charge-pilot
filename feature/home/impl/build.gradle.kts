@@ -13,9 +13,9 @@ dependencies {
     implementation(project(":core:control"))
     implementation(project(":core:datastore"))
     implementation(project(":core:device"))
+    implementation(project(":core:foreground"))
+    implementation(libs.timber)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
 }
-
-tasks.withType<Test>().configureEach { useJUnitPlatform() }

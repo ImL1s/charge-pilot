@@ -79,4 +79,11 @@ data class OperationRecord(
     val after: String?,
     val success: Boolean,
     val timestampMs: Long,
+    /** Stable capability descriptor id when known (for revert / disclosure). */
+    val capabilityId: String? = null,
+    val settingsKeyName: String? = null,
+    /** Raw settings value before the write (e.g. "0" / "1"), when captured. */
+    val rawBefore: String? = null,
+    val rawAfter: String? = null,
+    val reverted: Boolean = false,
 )

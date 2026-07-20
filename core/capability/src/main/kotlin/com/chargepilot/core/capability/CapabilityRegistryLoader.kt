@@ -2,6 +2,8 @@ package com.chargepilot.core.capability
 
 import android.content.Context
 import com.chargepilot.core.common.IoDispatcher
+import com.chargepilot.core.model.ControlMethod
+import com.chargepilot.core.model.WritableSettingsKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -10,8 +12,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Loads the capability registry. Order: cached OTA copy on disk -> bundled `assets/`.
- * The OTA fetcher is intentionally NOT in this class — keep this small and offline-safe.
+ * Loads the capability registry from the bundled `assets/capabilities-v1.json` only.
+ * OTA / remote cache is not implemented; keep this loader offline-safe.
  */
 interface CapabilityRegistryLoader {
     suspend fun load(): CapabilityRegistrySnapshot
@@ -49,6 +51,14 @@ class BundledCapabilityRegistryLoader @Inject constructor(
                 descriptor.settingsKey?.let { key ->
                     require(key.namespace == "system") {
                         "settingsKey for '${descriptor.id}' must be in 'system' namespace, got '${key.namespace}'"
+                    }
+                    val writeCapable = ControlMethod.WRITE_SETTINGS_KEY in descriptor.availableMethods ||
+                        ControlMethod.SHIZUKU_RPC in descriptor.availableMethods ||
+                        ControlMethod.ROOT_SHELL in descriptor.availableMethods
+                    if (writeCapable) {
+                        require(WritableSettingsKeys.isAllowedSystemInt(key.key)) {
+                            "settingsKey '${key.key}' for '${descriptor.id}' is not in WritableSettingsKeys allowlist"
+                        }
                     }
                 }
             }

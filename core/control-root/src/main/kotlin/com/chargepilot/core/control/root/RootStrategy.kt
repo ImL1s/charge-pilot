@@ -10,7 +10,7 @@ import com.chargepilot.core.model.FailureReason
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Skeleton root strategy; real implementation will use libsu. */
+/** Skeleton root strategy; real implementation will reintroduce libsu when shipped. */
 @Singleton
 class RootStrategy @Inject constructor() : ControlStrategy {
     override val method: ControlMethod = ControlMethod.ROOT_SHELL

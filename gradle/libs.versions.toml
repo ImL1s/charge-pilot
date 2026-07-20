@@ -12,7 +12,6 @@ android-target-sdk = "36"
 # Compose
 compose-bom = "2024.12.01"
 compose-compiler = "2.0.21"
-compose-material3 = "1.4.0-alpha05"
 
 # AndroidX
 androidx-activity-compose = "1.9.3"
@@ -37,7 +36,11 @@ timber = "5.0.1"
 # Privileged access (full flavor)
 shizuku-api = "13.1.5"
 shizuku-provider = "13.1.5"
-libsu = "5.2.2"
+
+# Static analysis (plan 020 — config/editor only until CI green)
+# ktlint / detekt plugin versions reserved for follow-up wiring:
+# detekt = "1.23.7"
+# ktlint = "12.1.2"
 
 # Test
 junit5 = "5.11.4"
@@ -56,7 +59,7 @@ compose-foundation = { group = "androidx.compose.foundation", name = "foundation
 compose-ui = { group = "androidx.compose.ui", name = "ui" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity-compose" }
@@ -81,7 +84,6 @@ timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "tim
 
 shizuku-api = { group = "dev.rikka.shizuku", name = "api", version.ref = "shizuku-api" }
 shizuku-provider = { group = "dev.rikka.shizuku", name = "provider", version.ref = "shizuku-provider" }
-libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 
 # Test
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit5" }

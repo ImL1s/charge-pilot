@@ -40,6 +40,11 @@
     <string name="home_status_samsung_classification_failed">無法開啟 Samsung 遊戲分類設定。</string>
     <string name="home_status_samsung_gaming_hub_opened">已開啟 Gaming Hub。可從這裡進入 Game Booster 設定；一般 App 分類仍需要 Game Booster+。</string>
     <string name="home_status_samsung_gaming_hub_failed">此裝置無法開啟 Gaming Hub。</string>
+    <string name="home_usage_access_title">遊戲偵測需要使用紀錄權限</string>
+    <string name="home_usage_access_body">要驗證「支援的遊戲在前景」條件，請授予 Charge Pilot 使用紀錄存取。沒有此權限時設定鍵仍可為 ON，但無法確認 Active。Charge Pilot 不會偽造遊戲狀態。</string>
+    <string name="home_usage_access_cta">開啟使用紀錄設定</string>
+    <string name="home_status_usage_access_opened">已開啟使用紀錄設定。請授權 Charge Pilot 後返回。</string>
+    <string name="home_status_usage_access_failed">此裝置無法開啟使用紀錄設定。</string>
 
     <string name="samsung_game_title">一般 App 需要 Samsung 遊戲分類</string>
     <string name="samsung_game_body">Samsung 旁路充電只會在 Game Booster 遊戲工作階段生效。只把捷徑加入 Gaming Hub 不夠。</string>

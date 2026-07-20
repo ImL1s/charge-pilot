@@ -11,4 +11,9 @@
     <string name="about_body_build_boundaries">Play 版本保留非特權路徑與備用跳轉。Full 版本加入 Shizuku/root 模組，以支援封鎖一般寫入的 ROM；Samsung S24 Ultra 的 App 內控制使用 Shizuku，不需要 root。</string>
     <string name="about_title_license">授權</string>
     <string name="about_body_license">開源授權為 AGPL-3.0。品牌項目來自內建登錄檔，並在可用時包含證據標籤與驗證日期。</string>
+    <string name="about_title_device_report">裝置報告</string>
+    <string name="about_body_device_report">複製此手機的 Markdown 摘要，可貼到 GitHub 裝置支援議題。不會自動上傳。</string>
+    <string name="about_copy_device_report">複製裝置報告</string>
+    <string name="about_share_device_report">分享裝置報告</string>
+    <string name="about_device_report_copied">已複製到剪貼簿</string>
 </resources>

@@ -11,4 +11,9 @@
     <string name="about_body_build_boundaries">Play builds keep non-privileged routes and fallback navigation. Full builds add Shizuku/root modules for ROMs that block normal writes; Samsung S24 Ultra app control uses Shizuku, not root.</string>
     <string name="about_title_license">License</string>
     <string name="about_body_license">Open source under AGPL-3.0. Brand entries come from the bundled registry and include evidence labels and verified dates where available.</string>
+    <string name="about_title_device_report">Device report</string>
+    <string name="about_body_device_report">Copy a markdown snapshot of this phone for GitHub device-support issues. Nothing is uploaded automatically.</string>
+    <string name="about_copy_device_report">Copy device report</string>
+    <string name="about_share_device_report">Share device report</string>
+    <string name="about_device_report_copied">Copied to clipboard</string>
 </resources>

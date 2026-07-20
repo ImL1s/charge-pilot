@@ -48,28 +48,29 @@ class DeviceDetector @Inject constructor(
     /**
      * Samsung uses different system properties depending on OneUI generation:
      *  - `ro.build.version.oneui` exists on newer devices (OneUI 4.0+ era) and stores a
-     *    5–6 digit MMmmpp code (e.g. `40101` = 4.01.01).
-     *  - `ro.build.version.sep` (Samsung Experience Platform) is present on most OneUI
-     *    1.x–3.x devices and is the closest proxy to the OneUI version.
-     *  - `ro.build.version.sem` is the legacy Samsung Experience marker on older builds.
-     *
-     * For SEP/SEM the canonical [RomVersion.version] is kept numeric (so registry
-     * `minRomVersion` comparisons still work); the OneUI-approximated human-readable
-     * label is attached via [RomVersion.displayLabel] for the UI.
+     *    5–6 digit MMmmpp code (e.g. `40101` = 4.01.01). **Only this path is used for
+     *    `minRomVersion` comparisons** against ONE_UI requirements.
+     *  - `ro.build.version.sep` / `sem` are still read for UI labels, but their comparable
+     *    [RomVersion.version] is the **mapped One UI major** (not the SEP major like 11.x),
+     *    so old SEP builds never falsely satisfy `minRomVersion` ONE_UI 6.0.
      */
     private fun readSamsungRom(): RomVersion? {
         systemPropertyReader.read("ro.build.version.oneui")?.let { raw ->
             return RomVersion(RomFlavor.ONE_UI, parseOneUiCode(raw), raw)
         }
         systemPropertyReader.read("ro.build.version.sep")?.let { raw ->
-            val numericVersion = parseSepCodeToNumericVersion(raw)
+            val comparable = sepCodeToComparableOneUi(raw)
             val displayLabel = sepCodeToDisplayLabel(raw)
-            return RomVersion(RomFlavor.ONE_UI, numericVersion, raw, displayLabel)
+            return RomVersion(RomFlavor.ONE_UI, comparable, raw, displayLabel)
         }
         systemPropertyReader.read("ro.build.version.sem")?.let { raw ->
-            // Legacy: keep raw as version so it is at least dot-parseable to 0 in registry,
-            // and surface the raw value in displayLabel so users still see what was found.
-            return RomVersion(RomFlavor.ONE_UI, raw, raw, displayLabel = "OneUI (SEM $raw)")
+            // SEM cannot be mapped reliably to One UI; use "0" so minRomVersion fails closed.
+            return RomVersion(
+                RomFlavor.ONE_UI,
+                version = "0",
+                raw = raw,
+                displayLabel = "OneUI (SEM $raw)",
+            )
         }
         return null
     }
@@ -90,12 +91,16 @@ class DeviceDetector @Inject constructor(
         return "$major.$minor"
     }
 
-    /** Returns a numeric, dot-parseable version derived from a SEP code (e.g. `110500` -> `"11.05"`). */
-    private fun parseSepCodeToNumericVersion(raw: String): String {
-        val intCode = raw.toIntOrNull() ?: return raw
+    /**
+     * Maps a SEP code to a comparable One UI major.minor for registry matching.
+     * Example: SEP `110500` → One UI ~2.x → `"2.0"` (never `"11.05"`).
+     * Unknown SEP majors fail closed with `"0"`.
+     */
+    private fun sepCodeToComparableOneUi(raw: String): String {
+        val intCode = raw.toIntOrNull() ?: return "0"
         val sepMajor = intCode / 10_000
-        val sepMinor = (intCode / 100) % 100
-        return "$sepMajor.${sepMinor.pad2()}"
+        val oneUiMajor = SEP_MAJOR_TO_ONEUI_MAJOR[sepMajor] ?: return "0"
+        return "$oneUiMajor.0"
     }
 
     /** Returns a human-friendly label like `"OneUI 2.x · SEP 11.05"`. Display only. */
@@ -125,6 +130,18 @@ class DeviceDetector @Inject constructor(
             14 to "OneUI 5.x",
             15 to "OneUI 6.x",
             16 to "OneUI 7.x",
+        )
+
+        /** Integer major used for minRomVersion comparisons (not display). */
+        val SEP_MAJOR_TO_ONEUI_MAJOR: Map<Int, Int> = mapOf(
+            9 to 1,
+            10 to 2,
+            11 to 2,
+            12 to 3,
+            13 to 4,
+            14 to 5,
+            15 to 6,
+            16 to 7,
         )
     }
 }

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="disclosure_title">能力揭露</string>
-    <string name="disclosure_body_format">此畫面會先說明能力 %1$s 的本機安全契約，然後 Charge Pilot 才會開啟設定路徑或嘗試由 App 控制寫入。</string>
-    <string name="disclosure_local_title">僅限本機控制</string>
-    <string name="disclosure_local_body">Charge Pilot 只會把嘗試紀錄存在此裝置，不會上傳操作歷史。</string>
-    <string name="disclosure_safety_title">繼續前要確認</string>
-    <string name="disclosure_step_user_initiated">只有在你主動開始設定或切換操作時才繼續。</string>
-    <string name="disclosure_step_preconditions">在首頁確認充電器、電量、前景 App 與品牌專屬前置條件。</string>
-    <string name="disclosure_step_shizuku">Full 版本的 Shizuku 控制需要 Shizuku 已安裝、執行中，且已授權。</string>
-    <string name="disclosure_step_samsung">Samsung Game Booster 旁路仍取決於 Samsung 韌體是否接受 Game Optimizing Service 路徑。</string>
+    <string name="disclosure_title">功能說明與同意</string>
+    <string name="disclosure_body_format">此畫面說明能力 %1$s 的本機安全契約；在 Charge Pilot 嘗試實驗性系統設定寫入前請先閱讀。</string>
+    <string name="disclosure_local_title">僅本機控制</string>
+    <string name="disclosure_local_body">Charge Pilot 將操作紀錄存在本機，不會上傳。能力登錄表內建於 APK，目前不會進行網路抓取。</string>
+    <string name="disclosure_safety_title">請先確認</string>
+    <string name="disclosure_step_user_initiated">僅在您主動發起設定或切換動作時繼續。</string>
+    <string name="disclosure_step_preconditions">在首頁確認充電器、電量、前景 App 與品牌特定條件。</string>
+    <string name="disclosure_step_shizuku">完整版需安裝、啟動並授權 Shizuku 才能使用 Shizuku 控制。</string>
+    <string name="disclosure_step_samsung">三星 Game Booster 旁路仍取決於韌體是否接受 Game Optimizing Service 路徑。</string>
+    <string name="disclosure_check_experimental">我了解這是實驗功能，在我的韌體上可能無效</string>
+    <string name="disclosure_check_write">我了解 Charge Pilot 只會在我確認後寫入系統設定</string>
+    <string name="disclosure_continue">繼續</string>
+    <string name="disclosure_loading">正在載入能力詳情…</string>
+    <string name="disclosure_missing">此裝置設定檔無法使用此能力。</string>
 </resources>

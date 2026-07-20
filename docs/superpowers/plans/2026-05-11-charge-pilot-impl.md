@@ -1,5 +1,7 @@
 # Charge Pilot — Implementation Plan
 
+> **Historical snapshot.** Live product truth is `README.md`, `docs/brand-methods.md`, `docs/architecture/`, and `capabilities-v1.json`. This checklist is not the current build plan.
+
 **Status:** v1 (drafted from `2026-05-11-charge-pilot-design.md`)
 **Date:** 2026-05-11
 **Spec:** `/Users/iml1s/Documents/mine/charge_pilot/docs/superpowers/specs/2026-05-11-charge-pilot-design.md`

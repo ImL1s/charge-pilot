@@ -6,4 +6,4 @@ In short: be kind, be specific, focus on the work. Harassment, personal attacks,
 
 Project decisions favor user safety, transparency, and reversibility over feature completeness. PRs that erode any of those will be politely declined regardless of code quality.
 
-For violations, please email the maintainers privately.
+For violations, open a private report via GitHub Security Advisories / contact maintainers through the repository’s private reporting channel when available. Do not open a public issue for harassment reports that would re-expose victims.

@@ -14,4 +14,8 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.timber)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.truth)
+    testImplementation(libs.coroutines.test)
 }

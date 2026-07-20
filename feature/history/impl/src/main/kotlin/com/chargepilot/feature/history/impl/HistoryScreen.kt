@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,19 +25,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.chargepilot.core.capability.CapabilityRegistry
+import com.chargepilot.core.control.ControlOrchestrator
 import com.chargepilot.core.datastore.OperationHistoryDataSource
+import com.chargepilot.core.device.DeviceDetector
 import com.chargepilot.core.model.CapabilityType
 import com.chargepilot.core.model.ControlMethod
+import com.chargepilot.core.model.ControlResult
 import com.chargepilot.core.model.OperationRecord
 import com.chargepilot.core.ui.InfoCard
 import com.chargepilot.core.ui.StepList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.DateFormat
 import java.util.Date
+import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @Composable
 fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
@@ -73,14 +80,22 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
             }
         } else {
             items(items = records, key = { it.id }) { record ->
-                OperationRecordCard(record = record)
+                OperationRecordCard(
+                    record = record,
+                    canRevert = viewModel.canRevert(record),
+                    onRevert = { viewModel.revert(record.id) },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun OperationRecordCard(record: OperationRecord) {
+private fun OperationRecordCard(
+    record: OperationRecord,
+    canRevert: Boolean,
+    onRevert: () -> Unit,
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -123,13 +138,29 @@ private fun OperationRecordCard(record: OperationRecord) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (record.reverted) {
+                Text(
+                    text = stringResource(R.string.history_reverted),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+            if (canRevert) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(onClick = onRevert, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.history_revert))
+                }
+            }
         }
     }
 }
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    operationHistory: OperationHistoryDataSource,
+    private val operationHistory: OperationHistoryDataSource,
+    private val controlOrchestrator: ControlOrchestrator,
+    private val capabilityRegistry: CapabilityRegistry,
+    private val deviceDetector: DeviceDetector,
 ) : ViewModel() {
     val records: StateFlow<List<OperationRecord>> = operationHistory.records
         .stateIn(
@@ -137,6 +168,55 @@ class HistoryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = emptyList(),
         )
+
+    fun canRevert(record: OperationRecord): Boolean {
+        if (!record.success || record.reverted) return false
+        if (record.capabilityId == null || record.rawBefore == null) return false
+        return record.method == ControlMethod.WRITE_SETTINGS_KEY ||
+            record.method == ControlMethod.SHIZUKU_RPC ||
+            record.method == ControlMethod.ROOT_SHELL
+    }
+
+    fun revert(recordId: String) {
+        viewModelScope.launch {
+            val record = records.value.firstOrNull { it.id == recordId } ?: return@launch
+            if (!canRevert(record)) return@launch
+            val capabilityId = record.capabilityId ?: return@launch
+            val rawBefore = record.rawBefore ?: return@launch
+            val profile = deviceDetector.detect()
+            val descriptor = capabilityRegistry.resolve(profile)
+                .firstOrNull { it.id == capabilityId }
+                ?: capabilityRegistry.rules()
+                    .flatMap { it.capabilities }
+                    .firstOrNull { it.id == capabilityId }
+                ?: return@launch
+            val strategy = controlOrchestrator.strategyFor(record.method) ?: return@launch
+            val enable = rawBefore != "0"
+            // rawBefore is the pre-write value: restore by writing that value.
+            // setEnabled(true) writes 1; setEnabled(false) writes 0.
+            val result = strategy.setEnabled(descriptor, enabled = enable)
+            operationHistory.markReverted(recordId)
+            operationHistory.append(
+                OperationRecord(
+                    id = "${System.currentTimeMillis()}-revert-${UUID.randomUUID()}",
+                    capability = record.capability,
+                    method = record.method,
+                    before = record.after,
+                    after = if (result is ControlResult.Success) {
+                        "Reverted to raw=$rawBefore"
+                    } else {
+                        "Revert failed: ${(result as? ControlResult.Failed)?.reason?.name}"
+                    },
+                    success = result is ControlResult.Success,
+                    timestampMs = System.currentTimeMillis(),
+                    capabilityId = capabilityId,
+                    settingsKeyName = record.settingsKeyName,
+                    rawBefore = record.rawAfter,
+                    rawAfter = rawBefore,
+                ),
+            )
+        }
+    }
 }
 
 private fun formatTime(timestampMs: Long): String =

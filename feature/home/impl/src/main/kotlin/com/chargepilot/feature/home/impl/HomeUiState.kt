@@ -51,6 +51,8 @@ enum class HomeStatusType {
     SamsungClassificationOpenFailed,
     SamsungGamingHubOpened,
     SamsungGamingHubOpenFailed,
+    UsageAccessOpened,
+    UsageAccessOpenFailed,
 }
 
 data class SamsungGameSetupUiState(

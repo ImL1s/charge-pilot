@@ -4,30 +4,51 @@ import com.chargepilot.core.model.CapabilityDescriptor
 import com.chargepilot.core.model.DeviceProfile
 import com.chargepilot.core.model.Manufacturer
 import com.chargepilot.core.model.RomFlavor
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Resolves a [DeviceProfile] to the list of capabilities the registry knows about for it.
- * The registry is loaded once from bundled assets; OTA updates may replace the cached
- * registry on next launch (see [CapabilityRegistryLoader]).
+ * The registry is loaded once from the bundled asset and cached in memory; OTA is not
+ * implemented (see [CapabilityRegistryLoader]).
  */
 @Singleton
 class CapabilityRegistry @Inject constructor(
     private val loader: CapabilityRegistryLoader,
 ) {
+    private val mutex = Mutex()
+    @Volatile
+    private var cached: CapabilityRegistrySnapshot? = null
+
     suspend fun resolve(profile: DeviceProfile): List<CapabilityDescriptor> {
-        val registry = loader.load()
+        val registry = snapshot()
         return registry.rules
             .filter { rule -> matches(rule.matchers, profile) }
             .flatMap { it.capabilities }
     }
 
-    suspend fun rules(): List<CapabilityRule> = loader.load().rules
+    suspend fun rules(): List<CapabilityRule> = snapshot().rules
+
+    /** Clears the in-memory cache (tests / future OTA apply). */
+    suspend fun clearCache() {
+        mutex.withLock { cached = null }
+    }
+
+    private suspend fun snapshot(): CapabilityRegistrySnapshot {
+        cached?.let { return it }
+        return mutex.withLock {
+            cached?.let { return it }
+            val loaded = loader.load()
+            cached = loaded
+            loaded
+        }
+    }
 
     private fun matches(matchers: Matchers, profile: DeviceProfile): Boolean {
-        // Use safe lookups instead of `valueOf` so a typo or future enum value in an
-        // OTA-fetched registry does not crash `resolve()` and lose all good rules.
+        // Use safe lookups instead of `valueOf` so a typo or unknown enum value in the
+        // registry does not crash `resolve()` and lose all good rules.
         val ruleManufacturer = Manufacturer.entries.firstOrNull { it.name == matchers.manufacturer }
             ?: return false
         if (ruleManufacturer != profile.manufacturer) return false

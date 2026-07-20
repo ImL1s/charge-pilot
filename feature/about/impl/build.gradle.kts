@@ -8,4 +8,7 @@ android {
 
 dependencies {
     implementation(project(":feature:about:api"))
+    implementation(project(":core:device"))
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.truth)
 }

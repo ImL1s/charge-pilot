@@ -17,8 +17,11 @@ import com.chargepilot.core.model.ControlState
 import com.chargepilot.core.model.DeviceProfile
 import com.chargepilot.core.model.FailureReason
 import com.chargepilot.core.model.SettingsKey
+import com.chargepilot.core.model.WritableSettingsKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
 import rikka.shizuku.Shizuku
 import timber.log.Timber
@@ -42,6 +45,8 @@ class ShizukuStrategy @Inject constructor(
 
     @Volatile
     private var cachedConnection: ServiceConnection? = null
+
+    private val bindMutex = Mutex()
 
     override suspend fun isAvailable(
         profile: DeviceProfile,
@@ -113,8 +118,20 @@ class ShizukuStrategy @Inject constructor(
         }
         val service = bindService() ?: return ControlResult.Failed(FailureReason.SHIZUKU_NOT_RUNNING)
         return try {
-            service.writeSystemSetting(key.key, if (enabled) "1" else "0")
-            ControlResult.Success
+            val desired = if (enabled) "1" else "0"
+            service.writeSystemSetting(key.key, desired)
+            // Read-after-write so history does not log Success when the key did not change.
+            val readBack = service.readSystemSetting(key.key).trim()
+            val matches = when (readBack) {
+                "", "null" -> false
+                "0" -> !enabled
+                else -> enabled
+            }
+            if (matches) {
+                ControlResult.Success
+            } else {
+                ControlResult.Failed(FailureReason.KEY_NOT_WRITABLE)
+            }
         } catch (t: RemoteException) {
             Timber.w(t, "Shizuku remote write failed for key=${key.key}")
             cachedService = null
@@ -135,6 +152,7 @@ class ShizukuStrategy @Inject constructor(
         if (key.namespace != "system") return false
         if (key.type != "int") return false
         if (!SAFE_SETTINGS_KEY.matches(key.key)) return false
+        if (!WritableSettingsKeys.isAllowedSystemInt(key.key)) return false
         return true
     }
 
@@ -171,11 +189,12 @@ class ShizukuStrategy @Inject constructor(
         false
     }
 
-    private suspend fun bindService(): IShizukuSettingsService? {
+    private suspend fun bindService(): IShizukuSettingsService? = bindMutex.withLock {
         cachedService?.takeIf { it.asBinder().pingBinder() }?.let { return it }
         if (permissionFailure(requestIfNeeded = false) != null) return null
 
         val deferred = CompletableDeferred<IShizukuSettingsService?>()
+        val args = userServiceArgs()
         val connection = object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, binder: IBinder?) {
                 val service = binder
@@ -193,13 +212,31 @@ class ShizukuStrategy @Inject constructor(
         cachedConnection = connection
 
         return try {
-            Shizuku.bindUserService(userServiceArgs(), connection)
-            withTimeoutOrNull(BIND_TIMEOUT_MS) { deferred.await() }
+            Shizuku.bindUserService(args, connection)
+            val service = withTimeoutOrNull(BIND_TIMEOUT_MS) { deferred.await() }
+            if (service == null) {
+                // Timeout or null binder: unbind so we do not leave zombie UserServices.
+                unbindQuietly(args, connection)
+                cachedService = null
+                cachedConnection = null
+                null
+            } else {
+                service
+            }
         } catch (t: Throwable) {
             Timber.w(t, "Shizuku UserService bind failed")
+            unbindQuietly(args, connection)
             cachedService = null
             cachedConnection = null
             null
+        }
+    }
+
+    private fun unbindQuietly(args: Shizuku.UserServiceArgs, connection: ServiceConnection) {
+        try {
+            Shizuku.unbindUserService(args, connection, true)
+        } catch (t: Throwable) {
+            Timber.d(t, "Shizuku unbindUserService failed")
         }
     }
 

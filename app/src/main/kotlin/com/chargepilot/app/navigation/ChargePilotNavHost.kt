@@ -36,6 +36,9 @@ import com.chargepilot.feature.brands.impl.BrandsScreen
 import com.chargepilot.feature.history.api.HistoryRoute
 import com.chargepilot.feature.history.api.historyRoute
 import com.chargepilot.feature.history.impl.HistoryScreen
+import com.chargepilot.feature.disclosure.api.disclosureRoute
+import com.chargepilot.feature.disclosure.api.navigateToDisclosure
+import com.chargepilot.feature.disclosure.impl.DisclosureScreen
 import com.chargepilot.feature.home.api.HomeRoute
 import com.chargepilot.feature.home.api.homeRoute
 import com.chargepilot.feature.home.impl.HomeScreen
@@ -98,11 +101,23 @@ fun ChargePilotNavHost() {
             startDestination = HomeRoute,
             modifier = Modifier.padding(innerPadding),
         ) {
-            homeRoute { HomeScreen() }
+            homeRoute {
+                HomeScreen(
+                    onNeedDisclosure = { capabilityId ->
+                        navController.navigateToDisclosure(capabilityId)
+                    },
+                )
+            }
             brandsRoute { BrandsScreen() }
             historyRoute { HistoryScreen() }
             advancedRoute { AdvancedScreen() }
             aboutRoute { AboutScreen() }
+            disclosureRoute { capabilityId ->
+                DisclosureScreen(
+                    capabilityId = capabilityId,
+                    onFinished = { navController.popBackStack() },
+                )
+            }
         }
     }
 }

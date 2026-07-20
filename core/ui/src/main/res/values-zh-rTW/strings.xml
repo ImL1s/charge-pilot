@@ -25,11 +25,11 @@
     <string name="condition_checking">檢查中</string>
 
     <string name="precondition_pd_charger">偵測到 USB PD/PPS 快充器</string>
-    <string name="precondition_battery_above_format">電量高於 %1$d%%</string>
+    <string name="precondition_battery_above_format">電量至少 %1$d%%</string>
     <string name="precondition_game_foreground">支援的遊戲在前景</string>
     <string name="summary_live_requirements">即時條件</string>
     <string name="summary_pd_charger">USB PD/PPS 快充器</string>
-    <string name="summary_battery_above_format">電量高於 %1$d%%</string>
+    <string name="summary_battery_above_format">電量至少 %1$d%%</string>
     <string name="summary_game_foreground">支援的遊戲在前景</string>
     <string name="summary_two_format">%1$s與%2$s</string>
     <string name="summary_many_format">%1$s，以及%2$s</string>

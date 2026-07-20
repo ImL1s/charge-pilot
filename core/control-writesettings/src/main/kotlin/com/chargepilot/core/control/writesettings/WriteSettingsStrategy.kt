@@ -13,6 +13,7 @@ import com.chargepilot.core.model.ControlState
 import com.chargepilot.core.model.DeviceProfile
 import com.chargepilot.core.model.FailureReason
 import com.chargepilot.core.model.SettingsKey
+import com.chargepilot.core.model.WritableSettingsKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -78,12 +79,22 @@ class WriteSettingsStrategy @Inject constructor(
             return ControlResult.Failed(FailureReason.SPECIAL_ACCESS_NOT_GRANTED)
         }
         return try {
-            val ok = Settings.System.putInt(
-                context.contentResolver,
-                key.key,
-                if (enabled) 1 else 0,
-            )
-            if (ok) ControlResult.Success else ControlResult.Failed(FailureReason.KEY_NOT_WRITABLE)
+            val desired = if (enabled) 1 else 0
+            val ok = Settings.System.putInt(context.contentResolver, key.key, desired)
+            if (!ok) return ControlResult.Failed(FailureReason.KEY_NOT_WRITABLE)
+            // Read-after-write: putInt can return true while the OEM leaves the key unchanged.
+            val readBack = readInt(key)
+            val expectedEngaged = enabled
+            val matches = when (readBack) {
+                null -> false
+                0 -> !expectedEngaged
+                else -> expectedEngaged
+            }
+            if (matches) {
+                ControlResult.Success
+            } else {
+                ControlResult.Failed(FailureReason.KEY_NOT_WRITABLE)
+            }
         } catch (t: SecurityException) {
             Timber.w(t, "WriteSettings security exception for key=${key.key}")
             ControlResult.Failed(FailureReason.SPECIAL_ACCESS_NOT_GRANTED)
@@ -98,6 +109,7 @@ class WriteSettingsStrategy @Inject constructor(
         val key = descriptor.settingsKey ?: return false
         if (key.namespace != "system") return false
         if (key.type != "int") return false
+        if (!WritableSettingsKeys.isAllowedSystemInt(key.key)) return false
         return true
     }
 

@@ -41,6 +41,8 @@ body:
         - CHARGE_SEPARATION
         - BATTERY_LIMIT_80
         - ADAPTIVE_CHARGING
+        - SMART_CHARGING
+        - CUSTOM_CHARGE_LIMIT
     validations:
       required: true
   - type: dropdown

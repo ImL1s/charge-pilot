@@ -7,7 +7,7 @@ Thanks for considering a contribution. Charge Pilot is a small open-source utili
 1. **No silent system changes.** Never propose code that modifies device settings without an explicit, dismissable user action.
 2. **Reversible by default.** Any state that the app can put the device into, the app must also be able to revert.
 3. **Distinguish "wrote a key" from "feature is active."** A successful settings write does not imply the OEM-defined preconditions (charger, battery, foreground app) are satisfied.
-4. **No telemetry.** Charge Pilot does not call home. The only network access is the read-only OTA fetch of the capability registry.
+4. **No telemetry.** Charge Pilot does not call home. Normal use requires no network; the capability registry ships bundled in the APK.
 5. **AGPL-3.0-or-later.** By contributing, you agree your contribution is licensed under [AGPL-3.0-or-later](LICENSE).
 
 ## Adding a device or capability
@@ -40,7 +40,7 @@ Conventional commits encouraged but not required:
 ```
 feat(capability): add OnePlus 13 bypass charging rule
 fix(write-settings): don't claim Active when key=1 but charger absent
-docs(privacy): clarify OTA fetch URL pattern
+docs(privacy): clarify bundled-only registry
 ```
 
 ## Pull requests

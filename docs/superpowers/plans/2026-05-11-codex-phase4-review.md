@@ -1,3 +1,5 @@
+> **Historical snapshot.** Live product truth is `README.md`, `docs/brand-methods.md`, `docs/architecture/`, and `capabilities-v1.json`.
+
 # Phase 4 Codex Review
 
 ## Security/Safety

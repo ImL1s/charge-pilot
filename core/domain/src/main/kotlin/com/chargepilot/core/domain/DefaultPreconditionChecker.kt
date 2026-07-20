@@ -27,7 +27,8 @@ class DefaultPreconditionChecker @Inject constructor(
         Precondition.PdChargerPresent -> battery.isPdChargerConnected()
         is Precondition.BatteryLevelAbove -> {
             val level = battery.batteryLevelPercent() ?: return false
-            level > precondition.percent
+            // OEM guidance (e.g. Samsung pause-PD) uses battery ≥ threshold.
+            level >= precondition.percent
         }
         is Precondition.GameInForeground -> foreground.isGameInForeground(precondition.knownGames)
     }

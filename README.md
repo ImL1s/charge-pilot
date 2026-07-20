@@ -46,4 +46,39 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Device-matrix PRs require attached evide
 
 ## Privacy
 
-No telemetry. No analytics. No personal data leaves the device. See [docs/PRIVACY.md](docs/PRIVACY.md).
+No telemetry. No analytics. No personal data leaves the device. The capability registry ships **bundled** in the APK (no network OTA fetch in the current release). See [docs/PRIVACY.md](docs/PRIVACY.md).
+
+## What works today
+
+- Capability detection + official guidance on supported brands (Layer 1).
+- Full flavor: Shizuku path for verified Samsung `pass_through` devices after disclosure consent.
+- Local operation history with optional one-tap revert when raw values were captured.
+- About → copy device report for GitHub issues.
+
+Play flavor remains guidance-first until a project-verified WRITE_SETTINGS key is allowlisted (see `docs/research/`).
+
+## Development
+
+Requirements:
+
+- **JDK 17**
+- Android SDK **platform 36** (compile/target SDK 36; min SDK 26)
+- `local.properties` with `sdk.dir=…` (Android Studio generates this)
+
+Commands (from repo root, prefer `./gradlew`):
+
+```bash
+./gradlew :app:assemblePlayDebug
+./gradlew :app:assembleFullDebug
+./gradlew test
+./gradlew lintPlayDebug lintFullDebug
+```
+
+Focused unit-test set often used while iterating:
+
+```bash
+./gradlew :core:model:test :core:capability:test :core:control:test :core:device:test :core:battery:test :core:domain:test
+```
+
+Architecture notes: [docs/architecture/overview.md](docs/architecture/overview.md).  
+Contributor guide: [AGENTS.md](AGENTS.md), [CONTRIBUTING.md](CONTRIBUTING.md).

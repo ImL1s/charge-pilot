@@ -1,6 +1,5 @@
 package com.chargepilot.feature.home.impl
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chargepilot.core.capability.CapabilityRegistry
@@ -10,8 +9,11 @@ import com.chargepilot.core.control.PrivilegedSetupNavigator
 import com.chargepilot.core.control.SamsungGameToolsStatus
 import com.chargepilot.core.control.SetupNavigationResult
 import com.chargepilot.core.datastore.OperationHistoryDataSource
+import com.chargepilot.core.datastore.UserPreferencesDataSource
 import com.chargepilot.core.device.DeviceDetector
+import com.chargepilot.core.domain.ControlStateBridge
 import com.chargepilot.core.domain.PreconditionChecker
+import com.chargepilot.core.foreground.ForegroundDetector
 import com.chargepilot.core.model.CapabilityDescriptor
 import com.chargepilot.core.model.CapabilityType
 import com.chargepilot.core.model.ControlMethod
@@ -26,12 +28,21 @@ import com.chargepilot.core.model.OperationRecord
 import com.chargepilot.core.model.Precondition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
+
+sealed interface HomeEffect {
+    data class OpenDisclosure(val capabilityId: String) : HomeEffect
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -40,12 +51,20 @@ class HomeViewModel @Inject constructor(
     private val controlOrchestrator: ControlOrchestrator,
     private val privilegedSetupNavigator: PrivilegedSetupNavigator,
     private val operationHistory: OperationHistoryDataSource,
+    private val userPreferences: UserPreferencesDataSource,
     private val preconditionChecker: PreconditionChecker,
+    private val foregroundDetector: ForegroundDetector,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
+
+    private val _effects = MutableSharedFlow<HomeEffect>(extraBufferCapacity = 1)
+    val effects: SharedFlow<HomeEffect> = _effects.asSharedFlow()
+
+    private var refreshJob: Job? = null
+    private var pendingEnableId: String? = null
 
     init {
         load()
@@ -57,24 +76,48 @@ class HomeViewModel @Inject constructor(
             load()
             return
         }
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        val generation = ready
+        refreshJob = viewModelScope.launch {
             val updatedRows = withContext(ioDispatcher) {
-                ready.capabilities.map { row -> buildCapabilityRow(ready.profile, row.descriptor) }
+                generation.capabilities.map { row ->
+                    buildCapabilityRow(generation.profile, row.descriptor, row.state)
+                }
             }
-            _state.value = ready.copy(
+            val latest = _state.value as? HomeUiState.Ready ?: return@launch
+            _state.value = latest.copy(
                 capabilities = updatedRows,
-                samsungGameSetup = buildSamsungGameSetup(ready.profile, updatedRows.map { it.descriptor }),
+                samsungGameSetup = buildSamsungGameSetup(
+                    generation.profile,
+                    updatedRows.map { it.descriptor },
+                ),
+                // Preserve a status message set by a newer user action during refresh.
+                statusMessage = latest.statusMessage ?: generation.statusMessage,
             )
+            maybeCompletePendingEnable()
+        }
+    }
+
+    /** Whether any row needs live precondition/key polling while the screen is STARTED. */
+    fun needsLivePolling(): Boolean {
+        val ready = _state.value as? HomeUiState.Ready ?: return false
+        return ready.capabilities.any { row ->
+            row.state is ControlState.Active ||
+                row.state is ControlState.PendingConditions ||
+                row.state is ControlState.Engaged
         }
     }
 
     private fun load() {
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
             _state.value = withContext(ioDispatcher) {
                 runCatching {
                     val profile = deviceDetector.detect()
                     val descriptors = capabilityRegistry.resolve(profile)
-                    val rows = descriptors.map { descriptor -> buildCapabilityRow(profile, descriptor) }
+                    val rows = descriptors.map { descriptor ->
+                        buildCapabilityRow(profile, descriptor, previousState = null)
+                    }
                     HomeUiState.Ready(
                         profile = profile,
                         capabilities = rows,
@@ -88,6 +131,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun openOfficialSettings(capabilityId: String) {
+        // Never fall through to write strategies for official guidance.
         runCapabilityAction(capabilityId, ControlMethod.OFFICIAL_GUIDANCE)
     }
 
@@ -99,11 +143,39 @@ class HomeViewModel @Inject constructor(
             setupPrivilegedMethod(capabilityId)
             return
         }
+        val enabling = !row.state.isConfiguredOn()
+        if (enabling) {
+            viewModelScope.launch {
+                if (!userPreferences.hasAcknowledged(capabilityId)) {
+                    pendingEnableId = capabilityId
+                    _effects.emit(HomeEffect.OpenDisclosure(capabilityId))
+                    return@launch
+                }
+                runCapabilityAction(
+                    capabilityId = capabilityId,
+                    method = method,
+                    enabled = true,
+                )
+            }
+            return
+        }
         runCapabilityAction(
             capabilityId = capabilityId,
             method = method,
-            enabled = !row.state.isConfiguredOn(),
+            enabled = false,
         )
+    }
+
+    private suspend fun maybeCompletePendingEnable() {
+        val id = pendingEnableId ?: return
+        if (!userPreferences.hasAcknowledged(id)) return
+        pendingEnableId = null
+        val ready = _state.value as? HomeUiState.Ready ?: return
+        val row = ready.capabilities.firstOrNull { it.descriptor.id == id } ?: return
+        val method = row.directControlMethods.firstOrNull() ?: return
+        if (!row.state.isConfiguredOn()) {
+            runCapabilityAction(capabilityId = id, method = method, enabled = true)
+        }
     }
 
     fun setupPrivilegedMethod(capabilityId: String) {
@@ -132,7 +204,7 @@ class HomeViewModel @Inject constructor(
                     ),
                 )
             }.onFailure { throwable ->
-                Log.w("ChargePilotHome", "Failed to persist setup history", throwable)
+                Timber.w(throwable, "Failed to persist setup history")
             }
             refreshCapabilityState(capabilityId, result.toStatusMessage(method))
         }
@@ -168,6 +240,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun openUsageAccessSettings() {
+        viewModelScope.launch {
+            val result = withContext(ioDispatcher) {
+                privilegedSetupNavigator.openUsageAccessSettings()
+            }
+            val statusMessage = if (result == SetupNavigationResult.OpenedPermissionPage) {
+                HomeStatusMessage(HomeStatusType.UsageAccessOpened)
+            } else {
+                HomeStatusMessage(HomeStatusType.UsageAccessOpenFailed)
+            }
+            refreshHome(statusMessage)
+        }
+    }
+
+    fun needsUsageAccessEducation(): Boolean {
+        val ready = _state.value as? HomeUiState.Ready ?: return false
+        if (ready.profile.manufacturer != Manufacturer.SAMSUNG) return false
+        if (ready.capabilities.none { it.descriptor.type == CapabilityType.PAUSE_PD_DURING_GAMING }) {
+            return false
+        }
+        return !foregroundDetector.hasUsageAccess()
+    }
+
     private fun runCapabilityAction(
         capabilityId: String,
         method: ControlMethod,
@@ -177,17 +272,45 @@ class HomeViewModel @Inject constructor(
         val row = ready.capabilities.firstOrNull { it.descriptor.id == capabilityId } ?: return
         val descriptor = row.descriptor
         viewModelScope.launch {
-            val result = withContext(ioDispatcher) {
-                val strategy = if (method.isDirectControl()) {
-                    controlOrchestrator.strategyFor(method)
-                } else {
-                    controlOrchestrator.pickStrategy(
+            val (result, rawBefore, rawAfter) = withContext(ioDispatcher) {
+                val strategy = when {
+                    method == ControlMethod.OFFICIAL_GUIDANCE ->
+                        controlOrchestrator.strategyFor(ControlMethod.OFFICIAL_GUIDANCE)
+                    method.isDirectControl() -> controlOrchestrator.strategyFor(method)
+                    else -> controlOrchestrator.pickStrategy(
                         profile = ready.profile,
                         descriptor = descriptor,
                         userPreference = method,
                     )
-                } ?: return@withContext ControlResult.Failed(FailureReason.UNSUPPORTED_DEVICE)
-                strategy.setEnabled(descriptor, enabled = enabled)
+                } ?: return@withContext Triple(
+                    ControlResult.Failed(FailureReason.UNSUPPORTED_DEVICE),
+                    null as String?,
+                    null as String?,
+                )
+                val beforeRaw = if (method.isDirectControl()) {
+                    when (val state = strategy.getCurrentState(descriptor)) {
+                        ControlState.Inactive -> "0"
+                        ControlState.Engaged -> "1"
+                        is ControlState.Active -> "1"
+                        is ControlState.PendingConditions -> "1"
+                        else -> null
+                    }
+                } else {
+                    null
+                }
+                val writeResult = strategy.setEnabled(descriptor, enabled = enabled)
+                val afterRaw = if (method.isDirectControl() && writeResult is ControlResult.Success) {
+                    when (val state = strategy.getCurrentState(descriptor)) {
+                        ControlState.Inactive -> "0"
+                        ControlState.Engaged -> "1"
+                        is ControlState.Active -> "1"
+                        is ControlState.PendingConditions -> "1"
+                        else -> if (enabled) "1" else "0"
+                    }
+                } else {
+                    null
+                }
+                Triple(writeResult, beforeRaw, afterRaw)
             }
             val setupResult = when {
                 method == ControlMethod.WRITE_SETTINGS_KEY &&
@@ -204,6 +327,8 @@ class HomeViewModel @Inject constructor(
                         before = row.state,
                         result = result,
                         enabled = enabled,
+                        rawBefore = rawBefore,
+                        rawAfter = rawAfter,
                     ),
                 )
                 if (setupResult != null) {
@@ -216,9 +341,9 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }.onFailure { throwable ->
-                Log.w("ChargePilotHome", "Failed to persist operation history", throwable)
+                Timber.w(throwable, "Failed to persist operation history")
             }
-            Log.i("ChargePilotHome", "Capability action method=$method id=$capabilityId result=$result")
+            Timber.d("Capability action method=%s id=%s result=%s", method, capabilityId, result)
             refreshCapabilityState(
                 capabilityId,
                 setupResult?.toStatusMessage(method) ?: result.toStatusMessage(method),
@@ -228,16 +353,21 @@ class HomeViewModel @Inject constructor(
 
     private fun refreshCapabilityState(capabilityId: String, statusMessage: HomeStatusMessage? = null) {
         val ready = _state.value as? HomeUiState.Ready ?: return
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
             val updatedRows = withContext(ioDispatcher) {
                 ready.capabilities.map { row ->
                     if (row.descriptor.id != capabilityId) return@map row
-                    buildCapabilityRow(ready.profile, row.descriptor)
+                    buildCapabilityRow(ready.profile, row.descriptor, row.state)
                 }
             }
-            _state.value = ready.copy(
+            val latest = _state.value as? HomeUiState.Ready ?: return@launch
+            _state.value = latest.copy(
                 capabilities = updatedRows,
-                samsungGameSetup = buildSamsungGameSetup(ready.profile, updatedRows.map { it.descriptor }),
+                samsungGameSetup = buildSamsungGameSetup(
+                    ready.profile,
+                    updatedRows.map { it.descriptor },
+                ),
                 statusMessage = statusMessage,
             )
         }
@@ -245,14 +375,21 @@ class HomeViewModel @Inject constructor(
 
     private fun refreshHome(statusMessage: HomeStatusMessage? = null) {
         val ready = _state.value as? HomeUiState.Ready ?: return
-        viewModelScope.launch {
+        refreshJob?.cancel()
+        refreshJob = viewModelScope.launch {
             val updatedRows = withContext(ioDispatcher) {
-                ready.capabilities.map { row -> buildCapabilityRow(ready.profile, row.descriptor) }
+                ready.capabilities.map { row ->
+                    buildCapabilityRow(ready.profile, row.descriptor, row.state)
+                }
             }
-            _state.value = ready.copy(
+            val latest = _state.value as? HomeUiState.Ready ?: return@launch
+            _state.value = latest.copy(
                 capabilities = updatedRows,
-                samsungGameSetup = buildSamsungGameSetup(ready.profile, updatedRows.map { it.descriptor }),
-                statusMessage = statusMessage,
+                samsungGameSetup = buildSamsungGameSetup(
+                    ready.profile,
+                    updatedRows.map { it.descriptor },
+                ),
+                statusMessage = statusMessage ?: latest.statusMessage,
             )
         }
     }
@@ -278,16 +415,23 @@ class HomeViewModel @Inject constructor(
         profile: DeviceProfile,
         descriptor: CapabilityDescriptor,
         directControlMethods: List<ControlMethod>,
+        previousState: ControlState?,
     ): ControlState {
         val preferredStateMethod = directControlMethods.firstOrNull()
         val strategy = preferredStateMethod?.let(controlOrchestrator::strategyFor)
         val rawState = strategy?.getCurrentState(descriptor) ?: ControlState.Unknown
-        return bridgeEngagedToActive(rawState, descriptor)
+        return ControlStateBridge.fromEngaged(
+            rawState = rawState,
+            preconditions = descriptor.preconditions,
+            checker = preconditionChecker,
+            previousState = previousState,
+        )
     }
 
     private suspend fun buildCapabilityRow(
         profile: DeviceProfile,
         descriptor: CapabilityDescriptor,
+        previousState: ControlState?,
     ): CapabilityRow {
         val setupStatuses = directSetupStatuses(profile, descriptor)
         val directMethods = setupStatuses
@@ -298,7 +442,7 @@ class HomeViewModel @Inject constructor(
             .map { it.method }
         return CapabilityRow(
             descriptor = descriptor,
-            state = readDisplayState(profile, descriptor, directMethods),
+            state = readDisplayState(profile, descriptor, directMethods, previousState),
             directControlMethods = directMethods,
             setupMethods = setupMethods,
             setupStatuses = setupStatuses,
@@ -315,25 +459,6 @@ class HomeViewModel @Inject constructor(
             val strategy = controlOrchestrator.strategyFor(method) ?: return@mapNotNull null
             strategy.setupStatus(profile, descriptor)
         }
-
-    /**
-     * Bridges [ControlState.Engaged] into either [ControlState.Active] or
-     * [ControlState.PendingConditions] using the [PreconditionChecker]. This is the
-     * single integration point mandated by the spec — strategies report "key written"
-     * (Engaged); the ViewModel decides "feature actually active" (Active).
-     */
-    private suspend fun bridgeEngagedToActive(
-        rawState: ControlState,
-        descriptor: CapabilityDescriptor,
-    ): ControlState {
-        if (rawState !is ControlState.Engaged) return rawState
-        val evaluation = preconditionChecker.check(descriptor.preconditions)
-        return if (evaluation.allMet) {
-            ControlState.Active(sinceEpochMs = System.currentTimeMillis())
-        } else {
-            ControlState.PendingConditions(unmet = evaluation.unmet)
-        }
-    }
 
     private fun ControlMethod.isDirectControl(): Boolean =
         this == ControlMethod.WRITE_SETTINGS_KEY ||
@@ -407,6 +532,8 @@ class HomeViewModel @Inject constructor(
         before: ControlState,
         result: ControlResult,
         enabled: Boolean,
+        rawBefore: String? = null,
+        rawAfter: String? = null,
     ): OperationRecord {
         val timestamp = System.currentTimeMillis()
         return OperationRecord(
@@ -417,6 +544,10 @@ class HomeViewModel @Inject constructor(
             after = result.historyLabel(enabled),
             success = result !is ControlResult.Failed,
             timestampMs = timestamp,
+            capabilityId = descriptor.id,
+            settingsKeyName = descriptor.settingsKey?.key,
+            rawBefore = rawBefore,
+            rawAfter = rawAfter,
         )
     }
 
@@ -438,6 +569,8 @@ class HomeViewModel @Inject constructor(
                 result == SetupNavigationResult.RequestedPermission ||
                 result == SetupNavigationResult.AlreadyReady,
             timestampMs = timestamp,
+            capabilityId = descriptor.id,
+            settingsKeyName = descriptor.settingsKey?.key,
         )
     }
 
@@ -481,7 +614,7 @@ class HomeViewModel @Inject constructor(
 
     private fun Precondition.historyLabel(): String = when (this) {
         Precondition.PdChargerPresent -> "USB PD/PPS charger"
-        is Precondition.BatteryLevelAbove -> "battery above $percent%"
+        is Precondition.BatteryLevelAbove -> "battery at least $percent%"
         is Precondition.GameInForeground -> "supported game foreground"
     }
 }

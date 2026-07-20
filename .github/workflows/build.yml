@@ -36,6 +36,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Run unit tests across all modules
         run: ./gradlew test
 
@@ -76,6 +79,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Assemble ${{ matrix.flavor }} debug
         run: ./gradlew :app:${{ matrix.debugTask }}
@@ -118,6 +124,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Assemble Full release APK
         run: ./gradlew :app:assembleFullRelease
 
@@ -138,12 +147,25 @@ jobs:
           unsigned_apk="dist/charge-pilot-full-${safe_ref}-${short_sha}-unsigned.apk"
           signed_apk="dist/charge-pilot-full-${safe_ref}-${short_sha}-signed.apk"
 
+          cleanup() {
+            rm -f release-keystore.jks ks-pass.txt key-pass.txt
+          }
+          trap cleanup EXIT
+
           if [[ -n "${RELEASE_KEYSTORE_BASE64:-}" && -n "${RELEASE_KEYSTORE_PASSWORD:-}" && -n "${RELEASE_KEY_ALIAS:-}" && -n "${RELEASE_KEY_PASSWORD:-}" ]]; then
+            umask 077
             printf '%s' "${RELEASE_KEYSTORE_BASE64}" | base64 --decode > release-keystore.jks
+            printf '%s' "${RELEASE_KEYSTORE_PASSWORD}" > ks-pass.txt
+            printf '%s' "${RELEASE_KEY_PASSWORD}" > key-pass.txt
             apksigner="$(find "${ANDROID_HOME}/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
-            "${apksigner}" sign               --ks release-keystore.jks               --ks-pass "pass:${RELEASE_KEYSTORE_PASSWORD}"               --ks-key-alias "${RELEASE_KEY_ALIAS}"               --key-pass "pass:${RELEASE_KEY_PASSWORD}"               --out "${signed_apk}"               "${apk_path}"
+            "${apksigner}" sign \
+              --ks release-keystore.jks \
+              --ks-pass "file:ks-pass.txt" \
+              --ks-key-alias "${RELEASE_KEY_ALIAS}" \
+              --key-pass "file:key-pass.txt" \
+              --out "${signed_apk}" \
+              "${apk_path}"
             "${apksigner}" verify --verbose "${signed_apk}"
-            rm -f release-keystore.jks
           else
             cp "${apk_path}" "${unsigned_apk}"
           fi

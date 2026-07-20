@@ -10,4 +10,6 @@ dependencies {
     implementation(project(":feature:history:api"))
     implementation(project(":core:datastore"))
     implementation(project(":core:control"))
+    implementation(project(":core:capability"))
+    implementation(project(":core:device"))
 }

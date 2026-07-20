@@ -16,15 +16,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ---
 
-Third-party libraries used by Charge Pilot (full list at build time via
-`./gradlew :app:licenseReport`):
+Third-party libraries used by Charge Pilot (coordinates and versions live in
+`gradle/libs.versions.toml`):
 
 - AndroidX Compose, Lifecycle, Navigation, DataStore — Apache-2.0
 - Kotlin and kotlinx.coroutines, kotlinx.serialization — Apache-2.0
 - Hilt / Dagger — Apache-2.0
 - Timber — Apache-2.0
 - Shizuku (full flavor only) — Apache-2.0
-- libsu (full flavor only) — Apache-2.0
+- JUnit 5, Truth, Turbine, MockK, Robolectric (test) — EPL-2.0 / Apache-2.0 as applicable
 - Fira Code, Fira Sans (when bundled) — SIL Open Font License 1.1
 
 Trademarks: "Samsung", "Galaxy", "One UI", "Google", "Pixel", "OnePlus", "OxygenOS",

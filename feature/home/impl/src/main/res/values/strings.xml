@@ -40,6 +40,11 @@
     <string name="home_status_samsung_classification_failed">Could not open Samsung game classification setup.</string>
     <string name="home_status_samsung_gaming_hub_opened">Opened Gaming Hub. Use it to reach Game Booster settings; app-as-game classification still needs Game Booster+.</string>
     <string name="home_status_samsung_gaming_hub_failed">Could not open Gaming Hub on this device.</string>
+    <string name="home_usage_access_title">Usage access for game detection</string>
+    <string name="home_usage_access_body">To verify the “supported game in foreground” condition, grant Usage access to Charge Pilot. Without it the key can still be ON, but Active status cannot be confirmed. Charge Pilot never spoofs a game session.</string>
+    <string name="home_usage_access_cta">Open usage access settings</string>
+    <string name="home_status_usage_access_opened">Opened Usage access settings. Grant Charge Pilot, then return.</string>
+    <string name="home_status_usage_access_failed">Could not open Usage access settings on this device.</string>
 
     <string name="samsung_game_title">Normal apps need Samsung game classification</string>
     <string name="samsung_game_body">Samsung bypass charging only engages during a Game Booster game session. Adding a shortcut to Gaming Hub is not enough.</string>

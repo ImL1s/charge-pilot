@@ -40,6 +40,20 @@ class PrivilegedSetupNavigator @Inject constructor(
         }
     }
 
+    /** Opens the system Usage access settings so GameInForeground can be evaluated. */
+    fun openUsageAccessSettings(): SetupNavigationResult {
+        val candidates = listOf(
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                data = Uri.parse("package:${context.packageName}")
+            },
+        )
+        candidates.forEach { intent ->
+            if (start(intent)) return SetupNavigationResult.OpenedPermissionPage
+        }
+        return SetupNavigationResult.Failed
+    }
+
     fun openShizukuSetup(): SetupNavigationResult {
         context.packageManager.getLaunchIntentForPackage(SHIZUKU_PACKAGE)?.let { launch ->
             if (start(launch)) return SetupNavigationResult.OpenedInstalledApp

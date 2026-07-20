@@ -25,11 +25,11 @@
     <string name="condition_checking">Checking</string>
 
     <string name="precondition_pd_charger">USB PD/PPS fast charger detected</string>
-    <string name="precondition_battery_above_format">Battery above %1$d%%</string>
+    <string name="precondition_battery_above_format">Battery at least %1$d%%</string>
     <string name="precondition_game_foreground">Supported game in foreground</string>
     <string name="summary_live_requirements">live requirements</string>
     <string name="summary_pd_charger">a USB PD/PPS fast charger</string>
-    <string name="summary_battery_above_format">battery above %1$d%%</string>
+    <string name="summary_battery_above_format">battery at least %1$d%%</string>
     <string name="summary_game_foreground">a supported game in foreground</string>
     <string name="summary_two_format">%1$s and %2$s</string>
     <string name="summary_many_format">%1$s, and %2$s</string>

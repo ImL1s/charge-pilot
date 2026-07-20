@@ -11,5 +11,5 @@ dependencies {
     api(project(":core:control"))
     implementation(project(":core:model"))
     implementation(project(":core:common"))
-    implementation(libs.libsu.core)
+    // libsu intentionally omitted while RootStrategy is a stub (plan 019).
 }

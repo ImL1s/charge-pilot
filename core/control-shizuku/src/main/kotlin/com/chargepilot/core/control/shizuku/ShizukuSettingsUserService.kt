@@ -2,6 +2,7 @@ package com.chargepilot.core.control.shizuku
 
 import android.os.RemoteException
 import android.system.Os
+import com.chargepilot.core.model.WritableSettingsKeys
 import java.util.concurrent.TimeUnit
 
 /**
@@ -29,6 +30,9 @@ class ShizukuSettingsUserService : IShizukuSettingsService.Stub() {
     private fun requireSafeKey(key: String): String {
         if (!SAFE_SETTINGS_KEY.matches(key)) {
             throw RemoteException("Unsafe settings key")
+        }
+        if (!WritableSettingsKeys.isAllowedSystemInt(key)) {
+            throw RemoteException("Settings key not allowlisted")
         }
         return key
     }

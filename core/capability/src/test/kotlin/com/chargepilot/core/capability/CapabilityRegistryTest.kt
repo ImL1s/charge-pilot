@@ -41,15 +41,92 @@ class CapabilityRegistryTest {
         buildFingerprint = "xiaomi/munch/...",
     )
 
-    private fun registry(rules: List<CapabilityRule>): CapabilityRegistry {
+    private fun registry(
+        rules: List<CapabilityRule>,
+        loadCounter: IntArray = intArrayOf(0),
+    ): CapabilityRegistry {
         val loader = object : CapabilityRegistryLoader {
-            override suspend fun load() = CapabilityRegistrySnapshot(
-                schemaVersion = 1,
-                lastUpdated = "2026-05-11",
-                rules = rules,
-            )
+            override suspend fun load(): CapabilityRegistrySnapshot {
+                loadCounter[0]++
+                return CapabilityRegistrySnapshot(
+                    schemaVersion = 1,
+                    lastUpdated = "2026-05-11",
+                    rules = rules,
+                )
+            }
         }
         return CapabilityRegistry(loader)
+    }
+
+    @Test
+    fun `loader is invoked once across multiple resolve calls`() = runTest {
+        val loads = intArrayOf(0)
+        val rule = CapabilityRule(
+            id = "samsung-only",
+            matchers = Matchers(manufacturer = "SAMSUNG"),
+            capabilities = emptyList(),
+        )
+        val reg = registry(listOf(rule), loads)
+        reg.resolve(samsungS24)
+        reg.resolve(samsungS24)
+        reg.rules()
+        assertThat(loads[0]).isEqualTo(1)
+    }
+
+    @Test
+    fun `unknown manufacturer string does not match`() = runTest {
+        val rule = CapabilityRule(
+            id = "bad-mfr",
+            matchers = Matchers(manufacturer = "NOT_A_REAL_OEM"),
+            capabilities = emptyList(),
+        )
+        assertThat(registry(listOf(rule)).resolve(samsungS24)).isEmpty()
+    }
+
+    @Test
+    fun `flavor mismatch does not match`() = runTest {
+        val rule = CapabilityRule(
+            id = "oxygen-only",
+            matchers = Matchers(
+                manufacturer = "SAMSUNG",
+                minRomVersion = RomVersionRequirement("OXYGEN_OS", "15.0"),
+            ),
+            capabilities = emptyList(),
+        )
+        assertThat(registry(listOf(rule)).resolve(samsungS24)).isEmpty()
+    }
+
+    @Test
+    fun `modelRegex miss does not match`() = runTest {
+        val rule = CapabilityRule(
+            id = "other-model",
+            matchers = Matchers(manufacturer = "SAMSUNG", modelRegex = "SM-A.*"),
+            capabilities = emptyList(),
+        )
+        assertThat(registry(listOf(rule)).resolve(samsungS24)).isEmpty()
+    }
+
+    @Test
+    fun `SEP-mapped One UI 2 does not satisfy min One UI 6`() = runTest {
+        val oldSepProfile = samsungS24.copy(
+            romVersion = RomVersion(RomFlavor.ONE_UI, "2.0", "110500", "OneUI 2.x · SEP 11.05"),
+        )
+        val rule = CapabilityRule(
+            id = "samsung-min-6",
+            matchers = Matchers(
+                manufacturer = "SAMSUNG",
+                minRomVersion = RomVersionRequirement("ONE_UI", "6.0"),
+            ),
+            capabilities = listOf(
+                com.chargepilot.core.model.CapabilityDescriptor(
+                    id = "samsung-min-6::PAUSE_PD_DURING_GAMING",
+                    type = CapabilityType.PAUSE_PD_DURING_GAMING,
+                    availableMethods = emptyList(),
+                    evidence = com.chargepilot.core.model.Evidence.PROJECT_VERIFIED,
+                ),
+            ),
+        )
+        assertThat(registry(listOf(rule)).resolve(oldSepProfile)).isEmpty()
     }
 
     @Test

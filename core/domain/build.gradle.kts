@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":core:foreground"))
     implementation(libs.coroutines.core)
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.truth)
     testImplementation(libs.turbine)
     testImplementation(libs.coroutines.test)
 }

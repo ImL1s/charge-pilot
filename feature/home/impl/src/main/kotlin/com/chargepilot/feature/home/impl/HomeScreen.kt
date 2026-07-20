@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,10 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.chargepilot.core.model.ControlMethod
 import com.chargepilot.core.model.ControlSetupStage
 import com.chargepilot.core.model.ControlState
@@ -27,17 +29,32 @@ import com.chargepilot.core.ui.DeviceProfileCard
 import com.chargepilot.core.ui.InfoCard
 import com.chargepilot.core.ui.StepList
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
+    onNeedDisclosure: (String) -> Unit = {},
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.refresh()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.refresh()
+            while (true) {
+                delay(LIVE_POLL_MS)
+                if (viewModel.needsLivePolling()) {
+                    viewModel.refresh()
+                }
+            }
+        }
     }
     LaunchedEffect(viewModel) {
-        while (true) {
-            delay(2_000L)
-            viewModel.refresh()
+        viewModel.effects.collectLatest { effect ->
+            when (effect) {
+                is HomeEffect.OpenDisclosure -> onNeedDisclosure(effect.capabilityId)
+            }
         }
     }
     Scaffold { innerPadding ->
@@ -50,15 +67,19 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
             is HomeUiState.Ready -> ReadyContent(
                 state = current,
                 innerPadding = innerPadding,
+                showUsageAccessCta = viewModel.needsUsageAccessEducation(),
                 onTryClick = viewModel::tryEnable,
                 onOpenOfficialClick = viewModel::openOfficialSettings,
                 onSetupClick = viewModel::setupPrivilegedMethod,
                 onOpenSamsungGameSetupClick = viewModel::openSamsungGameClassificationSetup,
                 onOpenSamsungGamingHubClick = viewModel::openSamsungGamingHub,
+                onOpenUsageAccessClick = viewModel::openUsageAccessSettings,
             )
         }
     }
 }
+
+private const val LIVE_POLL_MS = 5_000L
 
 @Composable
 private fun CenteredText(text: String, padding: PaddingValues) {
@@ -76,11 +97,13 @@ private fun CenteredText(text: String, padding: PaddingValues) {
 private fun ReadyContent(
     state: HomeUiState.Ready,
     innerPadding: PaddingValues,
+    showUsageAccessCta: Boolean,
     onTryClick: (String) -> Unit,
     onOpenOfficialClick: (String) -> Unit,
     onSetupClick: (String) -> Unit,
     onOpenSamsungGameSetupClick: () -> Unit,
     onOpenSamsungGamingHubClick: () -> Unit,
+    onOpenUsageAccessClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -99,6 +122,18 @@ private fun ReadyContent(
                 val steps = state.appControlSteps()
                 if (steps.isNotEmpty()) {
                     StepList(steps = steps)
+                }
+            }
+        }
+        if (showUsageAccessCta) {
+            item {
+                InfoCard(
+                    title = stringResource(R.string.home_usage_access_title),
+                    body = stringResource(R.string.home_usage_access_body),
+                ) {
+                    Button(onClick = onOpenUsageAccessClick) {
+                        Text(stringResource(R.string.home_usage_access_cta))
+                    }
                 }
             }
         }
@@ -231,6 +266,8 @@ private fun HomeStatusMessage.displayText(): String {
         )
         HomeStatusType.SamsungGamingHubOpened -> stringResource(R.string.home_status_samsung_gaming_hub_opened)
         HomeStatusType.SamsungGamingHubOpenFailed -> stringResource(R.string.home_status_samsung_gaming_hub_failed)
+        HomeStatusType.UsageAccessOpened -> stringResource(R.string.home_status_usage_access_opened)
+        HomeStatusType.UsageAccessOpenFailed -> stringResource(R.string.home_status_usage_access_failed)
     }
 }
 

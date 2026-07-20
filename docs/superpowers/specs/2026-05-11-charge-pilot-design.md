@@ -1,5 +1,7 @@
 # Charge Pilot — Design Specification
 
+> **Historical snapshot.** Live product truth is `README.md`, `docs/brand-methods.md`, `docs/architecture/`, and `core/capability/src/main/assets/capabilities-v1.json`. Do not re-execute obsolete checklists from this document as if they were current.
+
 **Status:** v1 (brainstorming output, awaiting user review)
 **Date:** 2026-05-11
 **Author:** Claude (drafted from `analyst` brainstorming + research via context7 + Bright Data + ui-ux-pro-max)
